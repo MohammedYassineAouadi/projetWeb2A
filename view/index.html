@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Startup Academy</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <div class="logo">STARTUP ACADEMY</div>
+    <nav>
+        <ul>
+            <li><a href="#">Accueil</a></li>
+            <li><a href="#">Annonces</a></li>
+            <li><a href="#">Cours</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="messagerie-app">
+    <aside class="sidebar">
+        <div class="channel" data-description="Channel for C programming discussions." style="background-image: url('../assets/images/c-bg.jpg')">
+            <span>C</span>
+            <p class="description">Channel for C programming discussions.</p>
+        </div>
+        <div class="channel" data-description="Channel for Python lovers." style="background-image: url('../assets/images/python-bg.jpg')">
+            <span>Python</span>
+            <p class="description">Channel for Python lovers.</p>
+        </div>
+        <div class="channel" data-description="JavaScript fun zone." style="background-image: url('../assets/images/js-bg.jpg')">
+            <span>JavaScript</span>
+            <p class="description">JavaScript fun zone.</p>
+        </div>
+    </aside>
+
+    <main class="chat-section">
+        <div class="chat-box" id="chatBox">
+            <!-- Messages will appear here -->
+        </div>
+        <form id="messageForm">
+            <input type="text" id="messageInput" placeholder="Type your message..." required />
+            <button type="submit">Send</button>
+        </form>
+    </main>
+</div>
+
+<footer>
+    &copy; 2025 Startup Academy. All rights reserved.
+</footer>
+
+<script src="../assets/js/scripts.js"></script>
+</body>
+</html>
