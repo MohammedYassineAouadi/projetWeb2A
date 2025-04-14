@@ -1,3 +1,9 @@
+<?php
+require_once "../../Controller/videoC.php";
+
+$videoC = new VideoC();
+$listeVideos = $videoC->afficherVideo();
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,8 +24,9 @@
 	<!-- CSS -->
 	<link rel="stylesheet" type="text/css" href="vendors/styles/core.css">
 	<link rel="stylesheet" type="text/css" href="vendors/styles/icon-font.min.css">
+	<link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css">
 	<link rel="stylesheet" type="text/css" href="vendors/styles/style.css">
-
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
@@ -250,7 +257,7 @@
 	<div class="left-side-bar">
 		<div class="brand-logo">
 			<a href="index.html">
-				<img src="vendors/images/logoicon.png" alt="" class="dark-logo">
+				<img src="vendors/images/logo.png" alt="" class="dark-logo">
 				<img src="vendors/images/logo.png" alt="" class="light-logo">
 			</a>
 			<div class="close-sidebar" data-toggle="left-sidebar-close">
@@ -266,18 +273,19 @@
                                 <span class="micon dw dw-calendar1"></span><span class="mtext">Home</span>
                             </a>
                         </li>
-                        <li class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle">
-                                <span class="micon dw dw-library"></span><span class="mtext">Cours</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="Add video.html">Add video</a></li>
-                                <li><a href="Video List.html">Video List</a></li>
-                                <li><a href="Add PDF.html">Add PDF</a></li>
+					</li>
+					<li class="dropdown">
+						<a href="javascript:;" class="dropdown-toggle">
+							<span class="micon dw dw-library"></span><span class="mtext">Cours</span>
+						</a>
+						<ul class="submenu">
+                        <li><a href="ajouterVideo.php">Add video</a></li>
+                                <li><a href="afficherVideo.php">Video List</a></li>
+                                <li><a href="ajouter_pdf.php">Add PDF</a></li>
 								<li><a href="Aafficherpdf.php">PDF List</a></li>
-
-                            </ul>
-                        </li>
+						</ul>
+					</li>
+					
 					<li class="dropdown">
 						<a href="javascript:;" class="dropdown-toggle">
 							<span class="micon dw dw-library"></span><span class="mtext">Tables</span>
@@ -288,6 +296,7 @@
 						</ul>
 					</li>
 					
+				
 				</ul>
 			</div>
 		</div>
@@ -301,189 +310,81 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-12">
 							<div class="title">
-								<h4>Videos</h4>
+								<h4>Video Liste</h4>
 							</div>
 							<nav aria-label="breadcrumb" role="navigation">
 								<ol class="breadcrumb">
 									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-									<li class="breadcrumb-item active" aria-current="page">Add Video</li>
+									<li class="breadcrumb-item active" aria-current="page">Video Liste</li>
 								</ol>
 							</nav>
 						</div>
 						
 					</div>
 				</div>
-				<!-- Default Basic Forms Start -->
-				<div class="pd-20 card-box mb-30">
-					<div class="clearfix">
-						<div class="pull-left">
-							<h4 class="text-blue h4">Videos</h4>
-							<!--<p class="mb-30">All bootstrap element classies</p>-->
-						</div>
-						<div class="pull-right">
-							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
-						</div>
+				<!-- Simple Datatable start -->
+				<div class="card-box mb-30">
+					<div class="pd-20">
+						<h4 class="text-blue h4">Liste</h4>
+						<p class="mb-0">you can find more options <a class="text-primary" href="https://datatables.net/" target="_blank">Click Here</a></p>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">id</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="https://getbootstrap.com" type="url">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="10/11/2025" type="date">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Durée</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="Durée" type="number">
-							</div>
-						</div>
+					<div class="pb-20">
+                    <table class="data-table table stripe hover nowrap">
+    <thead>
+        <tr>
+            <th class="table-plus datatable-nosort">Titre</th>
+            <th>id</th>
+            <th>Description</th>
+            <th>Url</th>
+            <th>Date</th>
+            <th>Durée</th>
+            <th>id_pdf</th>
+            <th>Voir</th>
 
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Id_pdf</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">id1</option>
-									<option value="2">id2</option>
-									<option value="3">id3</option>
-								</select>
-							</div>
-						</div>
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
+            <th class="datatable-nosort">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($listeVideos as $video): ?>
+            <tr>
+                <td class="table-plus"><?= htmlspecialchars($video['titre']) ?></td>
+                <td><?= htmlspecialchars($video['id_video']) ?></td>
+                <td><?= htmlspecialchars($video['description']) ?></td>
+                <td><?= htmlspecialchars($video['url']) ?></td>
+
+                <td><?= htmlspecialchars($video['date_ajout']) ?></td>
+                <td><?= htmlspecialchars($video['duree']) ?> min</td>
+                <td><?= htmlspecialchars($video['id_pdf']) ?></td>
+                <td><a href="<?= htmlspecialchars($video['url']) ?>" target="_blank">Voir</a></td>
+
+                <td>
+                    <div class="dropdown">
+                        <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                            <i class="dw dw-more"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                        <a class="dropdown-item" href="deleteVideo.php?id_video=<?= $video['id_video'] ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette vidéo ?');">
+    <i class="dw dw-delete-3"></i> Delete
+    <a class='dropdown-item' href='updateVideo.php?id_video=<?= $video['id_video'] ?> "'><i class='dw dw-edit2'></i> Edit</a>
+
+</a>
+
+                            
                         </div>
-                        
-						
-						
-					</form>
-					<div class="collapse collapse-box" id="basic-form1" >
-						<div class="code-box">
-							<div class="clearfix">
-								<a href="javascript:;" class="btn btn-primary btn-sm code-copy pull-left"  data-clipboard-target="#copy-pre"><i class="fa fa-clipboard"></i> Copy Code</a>
-								<a href="#basic-form1" class="btn btn-primary btn-sm pull-right" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-eye-slash"></i> Hide Code</a>
-							</div>
-							<pre><code class="xml copy-pre" id="copy-pre">
-<!--<form>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Text</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" type="text" placeholder="Johnny Brown">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Search</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" placeholder="Search Here" type="search">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Email</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="bootstrap@example.com" type="email">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="https://getbootstrap.com" type="url">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Telephone</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="1-(111)-111-1111" type="tel">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Password</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="password" type="password">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Number</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="100" type="number">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="example-datetime-local-input" class="col-sm-12 col-md-2 col-form-label">Date and time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control datetimepicker" placeholder="Choose Date anf time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control date-picker" placeholder="Select Date" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Month</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control month-picker" placeholder="Select Month" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control time-picker" placeholder="Select time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Select</label>
-		<div class="col-sm-12 col-md-10">
-			<select class="custom-select col-12">
-				<option selected="">Choose...</option>
-				<option value="1">One</option>
-				<option value="2">Two</option>
-				<option value="3">Three</option>
-			</select>
-		</div>
-	</div>
-	
-	
-</form>-->
-							</code></pre>
-						</div>
+                    </div>
+                </td>
+
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
 					</div>
 				</div>
-				<!-- Default Basic Forms End -->
-
-
+				<!-- Simple Datatable End -->
 				
-
-				
-
+			
 			</div>
 			<div class="footer-wrap pd-20 mb-20 card-box">
 				DeskApp - Bootstrap 4 Admin Template By <a href="https://github.com/dropways" target="_blank">Ankit Hingarajiya</a>
@@ -495,5 +396,18 @@
 	<script src="vendors/scripts/script.min.js"></script>
 	<script src="vendors/scripts/process.js"></script>
 	<script src="vendors/scripts/layout-settings.js"></script>
-</body>
+	<script src="src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+	<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+	<script src="src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
+	<!-- buttons for Export datatable -->
+	<script src="src/plugins/datatables/js/dataTables.buttons.min.js"></script>
+	<script src="src/plugins/datatables/js/buttons.bootstrap4.min.js"></script>
+	<script src="src/plugins/datatables/js/buttons.print.min.js"></script>
+	<script src="src/plugins/datatables/js/buttons.html5.min.js"></script>
+	<script src="src/plugins/datatables/js/buttons.flash.min.js"></script>
+	<script src="src/plugins/datatables/js/pdfmake.min.js"></script>
+	<script src="src/plugins/datatables/js/vfs_fonts.js"></script>
+	<!-- Datatable Setting js -->
+	<script src="vendors/scripts/datatable-setting.js"></script></body>
 </html>

@@ -279,17 +279,7 @@
 							<li><a href="PDF Liste.html">PDF List</a></li>
 						</ul>
 					</li>
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-library"></span><span class="mtext">Exams</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="addquiz.html">addquiz</a></li>
-							<li><a href="quizliste.html">quizliste</a></li>
-							<li><a href="addtest.html">addtest</a></li>
-						<li><a href="testliste.html">testliste</a></li>
-						</ul>
-					</li>
+					
 					<li class="dropdown">
 						<a href="javascript:;" class="dropdown-toggle">
 							<span class="micon dw dw-library"></span><span class="mtext">Tables</span>
@@ -323,14 +313,13 @@
 								</ol>
 							</nav>
 						</div>
-						
 					</div>
 				</div>
 				<!-- Simple Datatable start -->
 				<div class="card-box mb-30">
 					<div class="pd-20">
 						<h4 class="text-blue h4">Liste</h4>
-						<p class="mb-0">you can find more options <a class="text-primary" href="https://datatables.net/" target="_blank">Click Here</a></p>
+						<p class="mb-0">You can find more options <a class="text-primary" href="https://datatables.net/" target="_blank">Click Here</a></p>
 					</div>
 					<div class="pb-20">
 						<table class="data-table table stripe hover nowrap">
@@ -339,103 +328,24 @@
 									<th class="table-plus datatable-nosort">Titre</th>
 									<th>id</th>
 									<th>Url</th>
-									<th>id_video</th>
-                                 
 									<th class="datatable-nosort">Action</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
-									<td class="table-plus">Gloria F. Mead</td>
-									<td>25</td>
-									<td>Sagittarius</td>
-									<td>2829 Trainer Avenue Peoria, IL 61602 </td>
-									<td>
-										<div class="dropdown">
-											<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-												<i class="dw dw-more"></i>
-											</a>
-											<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-												<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-											</div>
-										</div>
-									</td>
-								</tr>
-								
-							
-								<tr>
-									<td class="table-plus">Andrea J. Cagle</td>
-									<td>30</td>
-									<td>Gemini</td>
-									<td>1280 Prospect Valley Road Long Beach, CA 90802 </td>
-									
-									<td>
-										<div class="dropdown">
-											<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-												<i class="dw dw-more"></i>
-											</a>
-											<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-												<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-											</div>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td class="table-plus">Andrea J. Cagle</td>
-									<td>30</td>
-									<td>Gemini</td>
-									<td>1280 Prospect Valley Road Long Beach, CA 90802 </td>
-							
-									<td>
-										<div class="dropdown">
-											<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-												<i class="dw dw-more"></i>
-											</a>
-											<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-												<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-											</div>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td class="table-plus">Andrea J. Cagle</td>
-									<td>30</td>
-									<td>Gemini</td>
-									<td>1280 Prospect Valley Road Long Beach, CA 90802 </td>
-								
-									<td>
-										<div class="dropdown">
-											<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-												<i class="dw dw-more"></i>
-											</a>
-											<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-												<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-												<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-											</div>
-										</div>
-									</td>
-								</tr>
+							<tbody id="pdf-list-body">
+								<!-- Les lignes du tableau seront ajoutées ici via AJAX -->
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<!-- Simple Datatable End -->
-				
-			
 			</div>
 			<div class="footer-wrap pd-20 mb-20 card-box">
 				DeskApp - Bootstrap 4 Admin Template By <a href="https://github.com/dropways" target="_blank">Ankit Hingarajiya</a>
 			</div>
 		</div>
 	</div>
-	<!-- js -->
+	
+	<!-- JS -->
 	<script src="vendors/scripts/core.js"></script>
 	<script src="vendors/scripts/script.min.js"></script>
 	<script src="vendors/scripts/process.js"></script>
@@ -444,7 +354,6 @@
 	<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
 	<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
 	<script src="src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
-	<!-- buttons for Export datatable -->
 	<script src="src/plugins/datatables/js/dataTables.buttons.min.js"></script>
 	<script src="src/plugins/datatables/js/buttons.bootstrap4.min.js"></script>
 	<script src="src/plugins/datatables/js/buttons.print.min.js"></script>
@@ -452,6 +361,32 @@
 	<script src="src/plugins/datatables/js/buttons.flash.min.js"></script>
 	<script src="src/plugins/datatables/js/pdfmake.min.js"></script>
 	<script src="src/plugins/datatables/js/vfs_fonts.js"></script>
-	<!-- Datatable Setting js -->
-	<script src="vendors/scripts/datatable-setting.js"></script></body>
+	<script src="vendors/scripts/datatable-setting.js"></script>
+	
+	<script>
+		$(document).ready(function() {
+			$.ajax({
+    url: 'http://localhost/pdf_project/afficherpdf.php', // Assure-toi que c'est le bon chemin vers ton fichier PHP
+    type: 'GET',
+    dataType: 'json',
+    success: function(data) {
+        console.log(data);  // Vérifie la sortie dans la console du navigateur
+        var tableBody = $('table tbody');
+        data.forEach(function(pdf) {
+            var row = '<tr>';
+            row += '<td>' + pdf.titre + '</td>';
+            row += '<td>' + pdf.id_pdf + '</td>';
+            row += '<td>' + pdf.url + '</td>';
+            row += '<td><a href="' + pdf.url + '" target="_blank">Voir PDF</a></td>';
+            row += '</tr>';
+            tableBody.append(row);
+        });
+    },
+    error: function(xhr, status, error) {
+        console.error("Une erreur est survenue : " + error);
+    }
+});
+		});
+		</script>
+		</body>
 </html>

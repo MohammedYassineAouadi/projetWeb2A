@@ -1,3 +1,24 @@
+<?php
+require_once("../../Model/Pdf.php");
+require_once "../../Controller/pdfC.php";
+
+// Vérifier si l'id est présent
+if (!isset($_GET['id_pdf'])) {
+    echo "Aucun identifiant fourni.";
+    exit;
+}
+//fourni une instance qui fait la recuperation des données selon id cliquer
+$pdfC = new PdfC();
+$pdfData = $pdfC->getPdfById($_GET['id_pdf']);
+
+if (!$pdfData) {
+    echo "PDF introuvable.";
+    exit;
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -271,11 +292,10 @@
                                 <span class="micon dw dw-library"></span><span class="mtext">Cours</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="Add video.html">Add video</a></li>
-                                <li><a href="Video List.html">Video List</a></li>
-                                <li><a href="Add PDF.html">Add PDF</a></li>
+							<li><a href="ajouterVideo.php">Add video</a></li>
+                                <li><a href="afficherVideo.php">Video List</a></li>
+                                <li><a href="ajouter_pdf.php">Add PDF</a></li>
 								<li><a href="Aafficherpdf.php">PDF List</a></li>
-
                             </ul>
                         </li>
 					<li class="dropdown">
@@ -301,14 +321,9 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-12">
 							<div class="title">
-								<h4>Videos</h4>
+								<h4>PDF</h4>
 							</div>
-							<nav aria-label="breadcrumb" role="navigation">
-								<ol class="breadcrumb">
-									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-									<li class="breadcrumb-item active" aria-current="page">Add Video</li>
-								</ol>
-							</nav>
+							
 						</div>
 						
 					</div>
@@ -317,74 +332,64 @@
 				<div class="pd-20 card-box mb-30">
 					<div class="clearfix">
 						<div class="pull-left">
-							<h4 class="text-blue h4">Videos</h4>
+							<h4 class="text-blue h4">Modifier Fichier PDF</h4>
 							<!--<p class="mb-30">All bootstrap element classies</p>-->
 						</div>
 						<div class="pull-right">
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">id</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="https://getbootstrap.com" type="url">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="10/11/2025" type="date">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Durée</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="Durée" type="number">
-							</div>
-						</div>
+                    <form method="POST" action="updatePdfT.php">
+    <!-- Champ caché pour l'identifiant -->
+    <input type="hidden" name="id_pdf" value="<?= htmlspecialchars($pdfData['id_pdf']) ?>">
 
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Id_pdf</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">id1</option>
-									<option value="2">id2</option>
-									<option value="3">id3</option>
-								</select>
-							</div>
-						</div>
+    <!-- Titre -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="titre" value="<?= htmlspecialchars($pdfData['titre']) ?>" >
+			<?php if (isset($errors['titre'])): ?>
+            <small style="color: red;"><?= $errors['titre'] ?></small>
+        <?php endif; ?>
+        </div>
+    </div>
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+    <!-- Type (select) -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Type</label>
+        <div class="col-sm-12 col-md-10">
+            <select class="custom-select col-12" name="Type" >
+                <option value="">Choisir...</option>
+                <option value="Type1" <?= $pdfData['Type'] == 'Type1' ? 'selected' : '' ?>>Type1</option>
+                <option value="Type2" <?= $pdfData['Type'] == 'Type2' ? 'selected' : '' ?>>Type2</option>
+                <option value="Type3" <?= $pdfData['Type'] == 'Type3' ? 'selected' : '' ?>>Type3</option>
+            </select>
+			<?php if (isset($errors['Type'])): ?>
+            <small style="color: red;"><?= $errors['Type'] ?></small>
+        <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- URL -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">URL</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="url" name="url" value="<?= htmlspecialchars($pdfData['url']) ?>" >
+        </div>
+		<?php if (isset($errors['url'])): ?>
+            <small style="color: red;"><?= $errors['url'] ?></small>
+        <?php endif; ?>
+    </div>
+
+    <!-- Bouton Modifier -->
+    <div class="form-group row">
+        <div class="col-sm-12 col-md-10 offset-md-2">
+            <button type="submit" class="btn btn-success">Modifier PDF</button>
+        </div>
+    </div>
+</form>
+
+
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">
@@ -392,87 +397,7 @@
 								<a href="#basic-form1" class="btn btn-primary btn-sm pull-right" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-eye-slash"></i> Hide Code</a>
 							</div>
 							<pre><code class="xml copy-pre" id="copy-pre">
-<!--<form>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Text</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" type="text" placeholder="Johnny Brown">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Search</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" placeholder="Search Here" type="search">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Email</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="bootstrap@example.com" type="email">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="https://getbootstrap.com" type="url">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Telephone</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="1-(111)-111-1111" type="tel">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Password</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="password" type="password">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Number</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="100" type="number">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="example-datetime-local-input" class="col-sm-12 col-md-2 col-form-label">Date and time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control datetimepicker" placeholder="Choose Date anf time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control date-picker" placeholder="Select Date" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Month</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control month-picker" placeholder="Select Month" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control time-picker" placeholder="Select time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Select</label>
-		<div class="col-sm-12 col-md-10">
-			<select class="custom-select col-12">
-				<option selected="">Choose...</option>
-				<option value="1">One</option>
-				<option value="2">Two</option>
-				<option value="3">Three</option>
-			</select>
-		</div>
-	</div>
-	
-	
-</form>-->
+
 							</code></pre>
 						</div>
 					</div>

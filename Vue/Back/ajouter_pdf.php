@@ -1,3 +1,50 @@
+<?php
+// Initialisation des variables
+$titre = $Type = $url = "";
+$errors = [];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $titre = trim($_POST["titre"]);
+    $Type = $_POST["Type"];
+    $url = trim($_POST["url"]);
+
+    // Vérifications
+    if (empty($titre)) {
+        $errors['titre'] = " Le titre est obligatoire.";
+    } elseif (strlen($titre) < 3) {
+        $errors['titre'] = " Le titre doit contenir au moins 3 caractères.";
+    }
+
+    if (empty($Type) || $Type == "Choose...") {
+        $errors['Type'] = " Veuillez sélectionner un type.";
+    }
+
+    if (empty($url)) {
+        $errors['url'] = " L'URL est obligatoire.";
+    } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
+        $errors['url'] = " L'URL n'est pas valide.";
+    }
+
+    // Si pas d'erreurs : on ajoute
+    if (empty($errors)) {
+        require_once "../../Controller/pdfC.php";
+        $pdf = new Pdf($titre, $Type, $url);
+        $pdfController = new PdfC();
+        $pdfAjoute = $pdfController->ajouterPdf($pdf);
+
+        if ($pdfAjoute) {
+            echo "<p style='color: green;'> PDF ajouté avec succès.</p>";
+            $titre = "";
+            $Type = "";
+            $url = "";
+        } else {
+            echo "<p style='color: red;'> Erreur lors de l'ajout du PDF.</p>";
+        }
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -273,9 +320,8 @@
                             <ul class="submenu">
                                 <li><a href="Add video.html">Add video</a></li>
                                 <li><a href="Video List.html">Video List</a></li>
-                                <li><a href="Add PDF.html">Add PDF</a></li>
-								<li><a href="Aafficherpdf.php">PDF List</a></li>
-
+                                <li><a href="ajouter_pdf.php">Add PDF</a></li>
+							<li><a href="Aafficherpdf.php">PDF List</a></li>
                             </ul>
                         </li>
 					<li class="dropdown">
@@ -301,12 +347,12 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-12">
 							<div class="title">
-								<h4>Videos</h4>
+								<h4>PDF</h4>
 							</div>
 							<nav aria-label="breadcrumb" role="navigation">
 								<ol class="breadcrumb">
 									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-									<li class="breadcrumb-item active" aria-current="page">Add Video</li>
+									<li class="breadcrumb-item active" aria-current="page">Add PDF</li>
 								</ol>
 							</nav>
 						</div>
@@ -317,74 +363,56 @@
 				<div class="pd-20 card-box mb-30">
 					<div class="clearfix">
 						<div class="pull-left">
-							<h4 class="text-blue h4">Videos</h4>
+							<h4 class="text-blue h4">Fichier PDF</h4>
 							<!--<p class="mb-30">All bootstrap element classies</p>-->
 						</div>
 						<div class="pull-right">
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">id</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="https://getbootstrap.com" type="url">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="10/11/2025" type="date">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Durée</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="Durée" type="number">
-							</div>
-						</div>
+<form method="POST" action="ajouter_pdf.php">
+<div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="titre" value="<?= htmlspecialchars($titre) ?>">
+            <?php if (isset($errors['titre'])): ?>
+                <small style="color: red;"><?= $errors['titre'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
 
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Id_pdf</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">id1</option>
-									<option value="2">id2</option>
-									<option value="3">id3</option>
-								</select>
-							</div>
-						</div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Type</label>
+        <div class="col-sm-12 col-md-10">
+            <select class="custom-select col-12" name="Type">
+                <option>Choose...</option>
+                <option value="Type1" <?= $Type == 'Type1' ? 'selected' : '' ?>>Type1</option>
+                <option value="Type2" <?= $Type == 'Type2' ? 'selected' : '' ?>>Type2</option>
+                <option value="Type3" <?= $Type == 'Type3' ? 'selected' : '' ?>>Type3</option>
+            </select>
+            <?php if (isset($errors['Type'])): ?>
+                <small style="color: red;"><?= $errors['Type'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">URL</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="url" value="<?= htmlspecialchars($url) ?>">
+            <?php if (isset($errors['url'])): ?>
+                <small style="color: red;"><?= $errors['url'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-12 col-md-10 offset-md-2">
+            <button class="btn btn-primary" type="submit">Ajouter PDF</button>
+        </div>
+    </div>
+</form>
+
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">
@@ -392,87 +420,7 @@
 								<a href="#basic-form1" class="btn btn-primary btn-sm pull-right" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-eye-slash"></i> Hide Code</a>
 							</div>
 							<pre><code class="xml copy-pre" id="copy-pre">
-<!--<form>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Text</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" type="text" placeholder="Johnny Brown">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Search</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" placeholder="Search Here" type="search">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Email</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="bootstrap@example.com" type="email">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="https://getbootstrap.com" type="url">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Telephone</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="1-(111)-111-1111" type="tel">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Password</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="password" type="password">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Number</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="100" type="number">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="example-datetime-local-input" class="col-sm-12 col-md-2 col-form-label">Date and time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control datetimepicker" placeholder="Choose Date anf time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control date-picker" placeholder="Select Date" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Month</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control month-picker" placeholder="Select Month" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control time-picker" placeholder="Select time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Select</label>
-		<div class="col-sm-12 col-md-10">
-			<select class="custom-select col-12">
-				<option selected="">Choose...</option>
-				<option value="1">One</option>
-				<option value="2">Two</option>
-				<option value="3">Three</option>
-			</select>
-		</div>
-	</div>
-	
-	
-</form>-->
+
 							</code></pre>
 						</div>
 					</div>

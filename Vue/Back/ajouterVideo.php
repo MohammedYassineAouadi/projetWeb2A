@@ -1,3 +1,79 @@
+<?php
+require_once "../../Controller/pdfC.php";
+require_once "../../Controller/videoC.php";
+
+require_once("../../Model/video.php");
+// Initialisation des variables
+$titre = $description = $url = $duree = $date_ajout = "";
+$id_pdf = null;
+$errors = [];
+
+// Récupération des ID PDF pour le select
+$pdfController = new pdfC();
+$pdfs = $pdfController->afficherPdfs(); // Assure-toi que cette méthode existe dans pdfC
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Nettoyage des données
+    $titre = trim($_POST["titre"] ?? "");
+    $description = trim($_POST["description"] ?? "");
+    $url = trim($_POST["url"] ?? "");
+    $duree = trim($_POST["duree"] ?? "");
+    $date_ajout = trim($_POST["date_ajout"] ?? "");
+    $id_pdf = $_POST["id_pdf"] ?? null;
+
+    // Vérifications
+    if (empty($titre)) {
+        $errors['titre'] = "❌ Le titre est obligatoire.";
+    } elseif (strlen($titre) < 3) {
+        $errors['titre'] = "❌ Le titre doit contenir au moins 3 caractères.";
+    }
+
+    if (empty($description)) {
+        $errors['description'] = "❌ La description est obligatoire.";
+    } elseif (strlen($description) < 5) {
+        $errors['description'] = "❌ La description doit contenir au moins 5 caractères.";
+    }
+
+    if (empty($url)) {
+        $errors['url'] = "❌ L'URL est obligatoire.";
+    } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
+        $errors['url'] = "❌ L'URL n'est pas valide.";
+    }
+
+    if (empty($duree)) {
+        $errors['duree'] = "❌ La durée est obligatoire.";
+    } elseif (!is_numeric($duree) || $duree <= 0) {
+        $errors['duree'] = "❌ La durée doit être un nombre positif.";
+    }
+
+    if (empty($date_ajout)) {
+        $errors['date_ajout'] = "❌ La date d'ajout est obligatoire.";
+    } elseif (!DateTime::createFromFormat('Y-m-d', $date_ajout)) {
+        $errors['date_ajout'] = "❌ Le format de la date est invalide (attendu : AAAA-MM-JJ).";
+    }
+
+    if (empty($id_pdf) || !is_numeric($id_pdf)) {
+        $errors['id_pdf'] = "❌ Veuillez sélectionner un ID PDF valide.";
+    }
+
+    // Si pas d'erreurs, on ajoute la vidéo
+    if (empty($errors)) {
+        $video = new Video($titre, $description, $url, $duree, $date_ajout, (int)$id_pdf);
+        $videoController = new VideoC();
+        $ajout = $videoController->ajouterVideo($video);
+
+        if ($ajout) {
+            echo "<p style='color: green;'>✅ Vidéo ajoutée avec succès.</p>";
+            $titre = $description = $url = $duree = $date_ajout = "";
+            $id_pdf = null;
+        } else {
+            echo "<p style='color: red;'>❌ Erreur lors de l'ajout de la vidéo.</p>";
+        }
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -271,9 +347,9 @@
                                 <span class="micon dw dw-library"></span><span class="mtext">Cours</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="Add video.html">Add video</a></li>
-                                <li><a href="Video List.html">Video List</a></li>
-                                <li><a href="Add PDF.html">Add PDF</a></li>
+                                <li><a href="ajouterVideo.php">Add video</a></li>
+                                <li><a href="afficherVideo.php">Video List</a></li>
+                                <li><a href="ajouter_pdf.php">Add PDF</a></li>
 								<li><a href="Aafficherpdf.php">PDF List</a></li>
 
                             </ul>
@@ -324,67 +400,71 @@
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">id</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="https://getbootstrap.com" type="url">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="10/11/2025" type="date">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Durée</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="Durée" type="number">
-							</div>
-						</div>
+					<form method="POST" action="ajouterVideo.php">
+        <!-- Titre -->
+        <div class="form-group">
+            <label>Titre</label>
+            <input class="form-control" type="text" name="titre" value="<?= htmlspecialchars($titre) ?>">
+            <?php if (isset($errors['titre'])): ?>
+                <small style="color: red;"><?= $errors['titre'] ?></small>
+            <?php endif; ?>
+        </div>
 
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Id_pdf</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">id1</option>
-									<option value="2">id2</option>
-									<option value="3">id3</option>
-								</select>
-							</div>
-						</div>
+        <!-- URL -->
+        <div class="form-group">
+            <label>URL</label>
+            <input class="form-control" type="text" name="url" value="<?= htmlspecialchars($url) ?>">
+            <?php if (isset($errors['url'])): ?>
+                <small style="color: red;"><?= $errors['url'] ?></small>
+            <?php endif; ?>
+        </div>
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+        <!-- ID PDF -->
+        <div class="form-group">
+            <label>ID PDF</label>
+            <select class="form-control" name="id_pdf">
+                <option value="">-- Sélectionner --</option>
+                <?php foreach ($pdfs as $pdf): ?>
+                    <option value="<?= $pdf['id_pdf'] ?>" <?= ($id_pdf == $pdf['id_pdf']) ? 'selected' : '' ?>>
+                        <?= $pdf['id_pdf'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <?php if (isset($errors['id_pdf'])): ?>
+                <small style="color: red;"><?= $errors['id_pdf'] ?></small>
+            <?php endif; ?>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" name="description"><?= htmlspecialchars($description) ?></textarea>
+            <?php if (isset($errors['description'])): ?>
+                <small style="color: red;"><?= $errors['description'] ?></small>
+            <?php endif; ?>
+        </div>
+
+        <!-- Durée -->
+        <div class="form-group">
+            <label>Durée (format mm:ss)</label>
+            <input class="form-control" type="text" name="duree" value="<?= htmlspecialchars($duree) ?>">
+            <?php if (isset($errors['duree'])): ?>
+                <small style="color: red;"><?= $errors['duree'] ?></small>
+            <?php endif; ?>
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+            <label>Date</label>
+            <input class="form-control" type="date_ajout" name="date_ajout" value="<?= htmlspecialchars($date_ajout) ?>">
+            <?php if (isset($errors['date_ajout'])): ?>
+                <small style="color: red;"><?= $errors['date_ajout'] ?></small>
+            <?php endif; ?>
+        </div>
+
+        <!-- Bouton -->
+        <button class="btn btn-primary" type="submit">Ajouter Vidéo</button>
+    </form>
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">
@@ -392,87 +472,7 @@
 								<a href="#basic-form1" class="btn btn-primary btn-sm pull-right" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-eye-slash"></i> Hide Code</a>
 							</div>
 							<pre><code class="xml copy-pre" id="copy-pre">
-<!--<form>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Text</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" type="text" placeholder="Johnny Brown">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Search</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" placeholder="Search Here" type="search">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Email</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="bootstrap@example.com" type="email">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="https://getbootstrap.com" type="url">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Telephone</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="1-(111)-111-1111" type="tel">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Password</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="password" type="password">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Number</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="100" type="number">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="example-datetime-local-input" class="col-sm-12 col-md-2 col-form-label">Date and time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control datetimepicker" placeholder="Choose Date anf time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control date-picker" placeholder="Select Date" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Month</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control month-picker" placeholder="Select Month" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control time-picker" placeholder="Select time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Select</label>
-		<div class="col-sm-12 col-md-10">
-			<select class="custom-select col-12">
-				<option selected="">Choose...</option>
-				<option value="1">One</option>
-				<option value="2">Two</option>
-				<option value="3">Three</option>
-			</select>
-		</div>
-	</div>
-	
-	
-</form>-->
+
 							</code></pre>
 						</div>
 					</div>

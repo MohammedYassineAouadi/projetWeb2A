@@ -1,3 +1,21 @@
+<?php
+require_once(__DIR__ . "/../../../config.php");
+
+// 🔁 On appelle la méthode statique pour obtenir la connexion
+$pdo = config::getConnexion();
+
+// Vérifie si l'ID du PDF est passé dans l'URL
+$pdf_id = isset($_GET['id_pdf']) ? $_GET['id_pdf'] : null;
+
+if ($pdf_id) {
+    $stmt = $pdo->prepare("SELECT * FROM video WHERE id_pdf = :id_pdf");
+    $stmt->execute(['id_pdf' => $pdf_id]);
+    $videos = $stmt->fetchAll();
+} else {
+    echo "PDF non trouvé.";
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
  
@@ -28,31 +46,43 @@ https://templatemo.com/tm-548-training-studio
 
 
 <body>
+    <!-- ***** Header Area Start ***** -->
     <header class="header-area header-sticky background-header">
         <div class="container">
             <div class="row">
                 <div class="col-12">
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
-                        <a href="index.html" class="logo">Training<em> Studio</em></a>
+                        <a href="index.html" class="logo"> Startup<em> Academy</em></a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
-                            <li><a href="index.html" class="active">Home</a></li>
-                            <li><a href="classes.html">Classes</a></li>
-                            <li><a href="schedule.html">Schedules</a></li>
+                            <li class="scroll-to-section">
+                                <a href="index.html" class="active" style="color: rgba(0,123,255,.25) ;">Home</a>
+                            </li>
+                            <li class="scroll-to-section">
+                                <a href="classes.html" style="color: rgba(0,123,255,.25);">Classes</a>
+                            </li>
+                            <li class="scroll-to-section">
+                                <a href="schedules.html" style="color: rgba(0,123,255,.25);">Schedules</a>
+                            </li>
                             <li class="has-sub">
                                 <a href="javascript:void(0)">Cours</a>
                                 <ul class="sub-menu">
-                                    <li><a href="video.html">Videos</a></li>
-                                    <li><a href="pdf.html">PDF</a></li>
+                                    <li><a href="pdf.php">Videos</a></li>
+                                    <li><a href="pdf.php">PDF</a></li>
                                 </ul>
                             </li>
                             <li><a href="Test.html">Test</a></li>
 
-                            <li class="scroll-to-section"><a href="#contact-us">Contact</a></li> 
-                            <li class="main-button"><a href="#">Sign Up</a></li>
-                        </ul>        
+                            <li class="scroll-to-section">
+                                <a href="#contact-us" style="color: rgba(0,123,255,.25);">Contact</a>
+                            </li>
+                            <li class="main-button">
+                                <a href="#" >Sign Up</a>
+                            </li>
+                        </ul>
+                                
                         <a class='menu-trigger'>
                             <span>Menu</span>
                         </a>
@@ -62,71 +92,49 @@ https://templatemo.com/tm-548-training-studio
             </div>
         </div>
     </header>
-    <section class="section" id="schedule">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 offset-lg-3">
-                    <div class="section-heading dark-bg">
-                        <h2>Classes <em>Schedule</em></h2>
-                        <img src="../assets/images/line-dec.png" alt="">
-                        <p>Nunc urna sem, laoreet ut metus id, aliquet consequat magna. Sed viverra ipsum dolor, ultricies fermentum massa consequat eu.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="filters">
-                        <ul class="schedule-filter">
-                            <li class="active" data-tsfilter="monday">Monday</li>
-                            <li data-tsfilter="tuesday">Tuesday</li>
-                            <li data-tsfilter="wednesday">Wednesday</li>
-                            <li data-tsfilter="thursday">Thursday</li>
-                            <li data-tsfilter="friday">Friday</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-10 offset-lg-1">
-                    <div class="schedule-table filtering">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td class="day-time">Fitness Class</td>
-                                    <td class="monday ts-item show" data-tsmeta="monday">10:00AM - 11:30AM</td>
-                                    <td class="tuesday ts-item" data-tsmeta="tuesday">2:00PM - 3:30PM</td>
-                                    <td>William G. Stewart</td>
-                                </tr>
-                                <tr>
-                                    <td class="day-time">Muscle Training</td>
-                                    <td class="friday ts-item" data-tsmeta="friday">10:00AM - 11:30AM</td>
-                                    <td class="thursday friday ts-item" data-tsmeta="thursday" data-tsmeta="friday">2:00PM - 3:30PM</td>
-                                    <td>Paul D. Newman</td>
-                                </tr>
-                                <tr>
-                                    <td class="day-time">Body Building</td>
-                                    <td class="tuesday ts-item" data-tsmeta="tuesday">10:00AM - 11:30AM</td>
-                                    <td class="monday ts-item show" data-tsmeta="monday">2:00PM - 3:30PM</td>
-                                    <td>Boyd C. Harris</td>
-                                </tr>
-                                <tr>
-                                    <td class="day-time">Yoga Training Class</td>
-                                    <td class="wednesday ts-item" data-tsmeta="wednesday">10:00AM - 11:30AM</td>
-                                    <td class="friday ts-item" data-tsmeta="friday">2:00PM - 3:30PM</td>
-                                    <td>Hector T. Daigle</td>
-                                </tr>
-                                <tr>
-                                    <td class="day-time">Advanced Training</td>
-                                    <td class="thursday ts-item" data-tsmeta="thursday">10:00AM - 11:30AM</td>
-                                    <td class="wednesday ts-item" data-tsmeta="wednesday">2:00PM - 3:30PM</td>
-                                    <td>Bret D. Bowers</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+    <section class="section" id="trainers">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="section-heading">
+                    <h2><em>PDF files</em></h2>
+                    <img src="../assets/images/line-dec.png" alt="">
                 </div>
             </div>
         </div>
-    </section>
-    <!-- ***** Contact Us Area Starts ***** -->
+
+        <div class="row">
+        <?php foreach ($videos as $video): ?>
+        <div class="col-lg-4">
+            <div class="trainer-item">
+                <div class="pdf-thumb">
+                    <!-- Intégration de la vidéo -->
+                    <img src="../uploads/video.png" alt="" width="70%" height="200px" style="object-fit: cover; border-radius: 10px;">
+                </div>
+                <br> </br>
+                <div class="down-content">
+                    <h4><?= htmlspecialchars($video['titre']) ?></h4>
+                    <p><?= htmlspecialchars($video['description']) ?></p>
+                    <p>Durée : <?= htmlspecialchars($video['duree']) ?> minutes</p>
+                    <p>Date : <?= htmlspecialchars($video['date_ajout']) ?></p>
+
+                    <!-- Bouton pour visionner la vidéo -->
+                    <a href="voir_video.php?id_video=<?= htmlspecialchars($video['id_video']) ?>" class="btn btn-primary mt-2">
+    Voir la vidéo
+</a>
+
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    </div>
+</section>
+
+
+
+
+<!-- ***** Contact Us Area Starts ***** -->
 <section class="section" id="contact-us">
     <div class="container-fluid">
         <div class="row">
@@ -190,4 +198,3 @@ https://templatemo.com/tm-548-training-studio
 </body>
 
 </html>
-    

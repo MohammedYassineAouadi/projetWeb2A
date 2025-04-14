@@ -277,17 +277,6 @@
 							<li><a href="PDF Liste.html">PDF List</a></li>
                             </ul>
                         </li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon dw dw-library"></span><span class="mtext">Exams</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="addquiz.html">addquiz</a></li>
-								<li><a href="quizliste.html">quizliste</a></li>
-								<li><a href="addtest.html">addtest</a></li>
-							<li><a href="testliste.html">testliste</a></li>
-							</ul>
-						</li>
 					<li class="dropdown">
 						<a href="javascript:;" class="dropdown-toggle">
 							<span class="micon dw dw-library"></span><span class="mtext">Tables</span>
@@ -334,39 +323,65 @@
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="https://getbootstrap.com" type="url">
-							</div>
-						</div>
-						
-						
-						
-						
-						
-						
-						
-						
+<form method="POST" action="ajouter_pdf.php">
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="titre" placeholder="Titre" required>
+        </div>
+    </div>
+	<!--<div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Type</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="Type" placeholder="Type" required>
+        </div>
+    </div>-->
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+	<div class="form-group row">
+		<label class="col-sm-12 col-md-2 col-form-label">Type</label>
+		<div class="col-sm-12 col-md-10">
+			<select class="custom-select col-12" name="Type">
+				<option selected="">Choose...</option>
+				<option value="Type1">Type1</option>
+				<option value="Type2">Type2</option>
+				<option value="Type3">Type3</option>
+			</select>
+		</div>
+	</div>
+
+   <!-- <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">ID</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="id_pdf" placeholder="ID (optionnel)">
+        </div>
+    </div>-->
+	<!--<div class="form-group row">
+		<label class="col-sm-12 col-md-2 col-form-label">Type</label>
+		<div class="col-sm-12 col-md-10">
+			<select class="custom-select col-12" name="type">
+				<option selected="">Choose...</option>
+				<option value="Type1">Type1</option>
+				<option value="Type2">Type2</option>
+				<option value="Type3">Type3</option>
+			</select>
+		</div>
+	</div>-->
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">URL</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="url" name="url" placeholder="https://exemple.com/pdf" required>
+        </div>
+    </div>
+	
+
+    <div class="form-group row">
+        <div class="col-sm-12 col-md-10 offset-md-2">
+            <button type="submit" class="btn btn-primary">Ajouter PDF</button>
+        </div>
+    </div>
+</form>
+
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">
@@ -374,87 +389,7 @@
 								<a href="#basic-form1" class="btn btn-primary btn-sm pull-right" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-eye-slash"></i> Hide Code</a>
 							</div>
 							<pre><code class="xml copy-pre" id="copy-pre">
-<!--<form>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Text</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" type="text" placeholder="Johnny Brown">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Search</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" placeholder="Search Here" type="search">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Email</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="bootstrap@example.com" type="email">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="https://getbootstrap.com" type="url">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Telephone</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="1-(111)-111-1111" type="tel">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Password</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="password" type="password">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Number</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="100" type="number">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="example-datetime-local-input" class="col-sm-12 col-md-2 col-form-label">Date and time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control datetimepicker" placeholder="Choose Date anf time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control date-picker" placeholder="Select Date" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Month</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control month-picker" placeholder="Select Month" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control time-picker" placeholder="Select time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Select</label>
-		<div class="col-sm-12 col-md-10">
-			<select class="custom-select col-12">
-				<option selected="">Choose...</option>
-				<option value="1">One</option>
-				<option value="2">Two</option>
-				<option value="3">Three</option>
-			</select>
-		</div>
-	</div>
-	
-	
-</form>-->
+
 							</code></pre>
 						</div>
 					</div>
