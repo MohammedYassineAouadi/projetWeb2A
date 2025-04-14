@@ -1,3 +1,14 @@
+<?php
+require_once __DIR__ . '/../../../config.php';
+require_once __DIR__ . '/../../../Controller/TestC.php';
+
+$testC = new TestC();
+$listeTest = $testC->afficherTests();
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -98,110 +109,37 @@ https://templatemo.com/tm-548-training-studio
  
 
     <!-- ***** Features Item Start ***** -->
-    <section class="section" id="features">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 offset-lg-3">
-                    <div class="section-heading">
-                        <h2>QUIZ <em>option</em></h2>
-                        <img src="../assets/images/line-dec.png" alt="waves">
-                        <p>Startup Academy offers interactive quizzes to test your knowledge, improve your skills, and track your learning progress.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <ul class="features-items">
-                        <li class="feature-item">
-                            <div class="left-icon">
-                                <img src="../assets/images/quiz.jpg" alt="First One">
-                            </div>
-                            <div class="right-content">
-                                <h4>quiz1</h4>
-                                <p>  Mission : Startup Academy helps entrepreneurs learn and grow.</p>
-                                <a href="#" class="text-button">Discover More</a>
-                            </div>
-                        </li>
-                        
-                      
-                    </ul>
-                </div>
-                <div class="col-lg-6">
-                    <ul class="features-items">
-                        <li class="feature-item">
-                            <div class="left-icon">
-                                <img src="../assets/images/quiz.jpg" alt="fourth muscle">
-                            </div>
-                            <div class="right-content">
-                                <h4>quiz2</h4>
-                                <p>Learning : Gain new skills through expert-led online courses.  .</p>
-                                <a href="#" class="text-button">Discover More</a>
-                            </div>
-                        </li>
-                        <li class="feature-item">
-                            <div class="left-icon">
-                                <img src="../assets/images/quiz.jpg" alt="training fifth">
-                            </div>
-                            <div class="right-content">
-                                <h4>quiz4</h4>
-                                <p>Opportunities : Find job offers and career opportunities in the startup world.</p>
-                                <a href="#" class="text-button">Discover More</a>
-                            </div>
-                        </li>
-                       
-                    </ul>
-                </div>
-            </div>
+<section class="section" id="features">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 offset-lg-3">
+        <div class="section-heading">
+          <h2>TEST <em>option</em></h2>
+          <img src="../assets/images/line-dec.png" alt="waves">
+          <p>Discover our tests to evaluate your skills and track your progress on Startup Academy.</p>
         </div>
-    </section>
-    <!-- ***** Features Item End ***** -->
+      </div>
 
-   
-    
-    <!-- ***** Contact Us Area Starts ***** -->
-    <section class="section" id="contact-us">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-xs-12">
-                    <div id="map">
-                      <iframe src="https://maps.google.com/maps?q=Av.+L%C3%BAcio+Costa,+Rio+de+Janeiro+-+RJ,+Brazil&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="600px" frameborder="0" style="border:0" allowfullscreen></iframe>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-xs-12">
-                    <div class="contact-form">
-                        <form id="contact" action="" method="post">
-                          <div class="row">
-                            <div class="col-md-6 col-sm-12">
-                              <fieldset>
-                                <input name="name" type="text" id="name" placeholder="Your Name*" required="">
-                              </fieldset>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                              <fieldset>
-                                <input name="email" type="text" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your Email*" required="">
-                              </fieldset>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                              <fieldset>
-                                <input name="subject" type="text" id="subject" placeholder="Subject">
-                              </fieldset>
-                            </div>
-                            <div class="col-lg-12">
-                              <fieldset>
-                                <textarea name="message" rows="6" id="message" placeholder="Message" required=""></textarea>
-                              </fieldset>
-                            </div>
-                            <div class="col-lg-12">
-                              <fieldset>
-                                <button type="submit" id="form-submit" class="main-button">Send Message</button>
-                              </fieldset>
-                            </div>
-                          </div>
-                        </form>
-                    </div>
-                </div>
+      <div class="col-lg-6">
+        <ul class="features-items">
+          <?php foreach ($listeTest as $test): ?>
+          <li class="feature-item">
+            <div class="left-icon">
+              <img src="../assets/images/test.jpg" alt="test">
             </div>
-        </div>
-    </section>
-    <!-- ***** Contact Us Area Ends ***** -->
+            <div class="right-content">
+              <h4><?= htmlspecialchars($test['test_name']) ?></h4>
+              <p>Take this test and check your knowledge.</p>
+              <a href="detailsTest.php?idTest=<?= $test['idTest'] ?>" class="text-button">Discover More</a>
+            </div>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ***** Features Item End ***** -->
     
     <!-- ***** Footer Start ***** -->
     <footer>

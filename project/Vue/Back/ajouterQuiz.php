@@ -1,3 +1,76 @@
+<?php
+require_once '../../config.php';
+require_once '../../Model/Quiz.php';
+require_once '../../Controller/ajouterQuiz.php';
+
+$errors = [];
+$quiz_name = $questionQ1 = $option1 = $option2 = $option3 = $correct_option1 = "";
+$questionQ2 = $op1 = $op2 = $op3 = $correct_op2 = "";
+$questionQ3 = $opt1 = $opt2 = $opt3 = $correct_opt3 = "";
+$id_video = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Nettoyage des inputs
+    $quiz_name = trim($_POST['quiz_name']);
+    $questionQ1 = trim($_POST['questionQ1']);
+    $option1 = trim($_POST['option1']);
+    $option2 = trim($_POST['option2']);
+    $option3 = trim($_POST['option3']);
+    $correct_option1 = trim($_POST['correct_option1']);
+
+    $questionQ2 = trim($_POST['questionQ2']);
+    $op1 = trim($_POST['op1']);
+    $op2 = trim($_POST['op2']);
+    $op3 = trim($_POST['op3']);
+    $correct_op2 = trim($_POST['correct_op2']);
+
+    $questionQ3 = trim($_POST['questionQ3']);
+    $opt1 = trim($_POST['opt1']);
+    $opt2 = trim($_POST['opt2']);
+    $opt3 = trim($_POST['opt3']);
+    $correct_opt3 = trim($_POST['correct_opt3']);
+
+    $id_video = trim($_POST['id_video']);
+
+    // Contrôles
+    if (empty($quiz_name)) $errors['quiz_name'] = "❌ Le titre est requis.";
+    if (empty($questionQ1)) $errors['questionQ1'] = "❌ La question 1 est requise.";
+    if (empty($option1) || empty($option2) || empty($option3)) $errors['optionsQ1'] = "❌ Les 3 options de Q1 sont requises.";
+    if (!in_array($correct_option1, [$option1, $option2, $option3])) $errors['correct_option1'] = "❌ La réponse 1 n'est pas valide.";
+
+    if (empty($questionQ2)) $errors['questionQ2'] = "❌ La question 2 est requise.";
+    if (empty($op1) || empty($op2) || empty($op3)) $errors['optionsQ2'] = "❌ Les 3 options de Q2 sont requises.";
+    if (!in_array($correct_op2, [$op1, $op2, $op3])) $errors['correct_op2'] = "❌ La réponse 2 n'est pas valide.";
+
+    if (empty($questionQ3)) $errors['questionQ3'] = "❌ La question 3 est requise.";
+    if (empty($opt1) || empty($opt2) || empty($opt3)) $errors['optionsQ3'] = "❌ Les 3 options de Q3 sont requises.";
+    if (!in_array($correct_opt3, [$opt1, $opt2, $opt3])) $errors['correct_opt3'] = "❌ La réponse 3 n'est pas valide.";
+
+    if (empty($id_video) || !is_numeric($id_video)) $errors['id_video'] = "❌ L'ID vidéo est requis et doit être un nombre.";
+
+    // Ajout si pas d'erreurs
+    if (empty($errors)) {
+        $quiz = new Quiz(
+            $quiz_name, $questionQ1, $option1, $option2, $option3, $correct_option1,
+            $questionQ2, $op1, $op2, $op3, $correct_op2,
+            $questionQ3, $opt1, $opt2, $opt3, $correct_opt3,
+            $id_video
+        );
+        $quizController = new QuizC();
+        $quizController->ajouterQuiz($quiz);
+        echo "<p style='color: green;'>✅ Quiz ajouté avec succès.</p>";
+        
+        // Réinitialiser les champs
+        $quiz_name = $questionQ1 = $option1 = $option2 = $option3 = $correct_option1 = "";
+        $questionQ2 = $op1 = $op2 = $op3 = $correct_op2 = "";
+        $questionQ3 = $opt1 = $opt2 = $opt3 = $correct_opt3 = "";
+        $id_video = "";
+    }
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -334,152 +407,151 @@
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">idQuiz</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">quiz_name</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="quiz_name" type="texte">
-							</div>
-						</div>
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">QUIZ</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">One</option>
-									<option value="2">Two</option>
-									<option value="3">Three</option>
-									<option value="4">Four</option>
-								</select>
-							</div>
-						</div>
+					<!-- Formulaire HTML pour ajouter un quiz -->
+					
+					<form method="POST" action="">
+    <!-- Titre du Quiz -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="quiz_name" value="<?= htmlspecialchars($quiz_name ?? '') ?>" placeholder="Titre du quiz" required>
+            <?php if (isset($errors['quiz_name'])): ?>
+                <small style="color: red;"><?= $errors['quiz_name'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+    <!-- Question 1 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Question 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="questionQ1" value="<?= htmlspecialchars($questionQ1 ?? '') ?>" placeholder="Question 1" type="text" required>
+            <?php if (isset($errors['questionQ1'])): ?>
+                <small style="color: red;"><?= $errors['questionQ1'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
+    <!-- Options pour Question 1 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="option1" value="<?= htmlspecialchars($option1 ?? '') ?>" type="text" placeholder="Option 1" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="option2" value="<?= htmlspecialchars($option2 ?? '') ?>" type="text" placeholder="Option 2" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="option3" value="<?= htmlspecialchars($option3 ?? '') ?>" type="text" placeholder="Option 3" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Correct Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="correct_option1" value="<?= htmlspecialchars($correct_option1 ?? '') ?>" type="text" placeholder="Option correcte 1" required>
+            <?php if (isset($errors['correct_option1'])): ?>
+                <small style="color: red;"><?= $errors['correct_option1'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Question 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="questionQ2" value="<?= htmlspecialchars($questionQ2 ?? '') ?>" placeholder="Question 2" type="text" required>
+        </div>
+    </div>
+    <!-- Options pour Question 2 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="op1" value="<?= htmlspecialchars($op1 ?? '') ?>" type="text" placeholder="Option 1" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="op2" value="<?= htmlspecialchars($op2 ?? '') ?>" type="text" placeholder="Option 2" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="op3" value="<?= htmlspecialchars($op3 ?? '') ?>" type="text" placeholder="Option 3" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Correct Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="correct_op2" value="<?= htmlspecialchars($correct_op2 ?? '') ?>" type="text" placeholder="Option correcte 2" required>
+            <?php if (isset($errors['correct_op2'])): ?>
+                <small style="color: red;"><?= $errors['correct_op2'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Question 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="questionQ3" value="<?= htmlspecialchars($questionQ3 ?? '') ?>" placeholder="Question 3" type="text" required>
+        </div>
+    </div>
+    <!-- Options pour Question 3 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="opt1" value="<?= htmlspecialchars($opt1 ?? '') ?>" type="text" placeholder="Option 1" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="opt2" value="<?= htmlspecialchars($opt2 ?? '') ?>" type="text" placeholder="Option 2" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="opt3" value="<?= htmlspecialchars($opt3 ?? '') ?>" type="text" placeholder="Option 3" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Correct Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="correct_opt3" value="<?= htmlspecialchars($correct_opt3 ?? '') ?>" type="text" placeholder="Option correcte 3" required>
+            <?php if (isset($errors['correct_opt3'])): ?>
+                <small style="color: red;"><?= $errors['correct_opt3'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- ID Vidéo -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">ID Vidéo</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="id_video" value="<?= htmlspecialchars($id_video ?? '') ?>" type="number" placeholder="ID Vidéo" required>
+            <?php if (isset($errors['id_video'])): ?>
+                <small style="color: red;"><?= $errors['id_video'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="form-group row">
+        <div class="col-sm-12 col-md-10 offset-md-2">
+            <button type="submit" class="btn btn-primary">Ajouter Quiz</button>
+        </div>
+    </div>
+</form>
+
+
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">

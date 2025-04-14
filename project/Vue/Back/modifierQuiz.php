@@ -1,3 +1,26 @@
+<?php
+require_once("../../Model/Quiz.php");
+require_once("../../Controller/ajouterQuiz.php");
+
+
+if (!isset($_GET['idQuiz'])) {
+    echo "Identifiant quiz manquant.";
+    exit;
+}
+
+$quizC = new QuizC();
+$quizData = $quizC->getQuizById($_GET['idQuiz']);
+
+if (!$quizData) {
+    echo "Quiz introuvable.";
+    exit;
+}
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -334,152 +357,130 @@
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">idQuiz</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">quiz_name</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="quiz_name" type="texte">
-							</div>
-						</div>
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">QUIZ</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">One</option>
-									<option value="2">Two</option>
-									<option value="3">Three</option>
-									<option value="4">Four</option>
-								</select>
-							</div>
-						</div>
+					<!-- Formulaire HTML pour ajouter un quiz -->
+                    <form method="POST" action="modifierQuizT.php">
+    <input type="hidden" name="idQuiz" value="<?php echo $quizData['idQuiz']; ?>">
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="quiz_name" value="<?= $quizData['quiz_name']; ?>" required>
+        </div>
+    </div>
+
+    <!-- Question 1 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Question 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="questionQ1" value="<?= $quizData['questionQ1']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="option1" value="<?= $quizData['option1']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="option2" value="<?= $quizData['option2']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="option3" value="<?= $quizData['option3']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Correct Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="correct_option1" value="<?= $quizData['correct_option1']; ?>" type="text" required>
+        </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Question 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="questionQ2" value="<?= $quizData['questionQ2']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="op1" value="<?= $quizData['op1']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="op2" value="<?= $quizData['op2']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="op3" value="<?= $quizData['op3']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Correct Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="correct_op2" value="<?= $quizData['correct_op2']; ?>" type="text" required>
+        </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Question 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="questionQ3" value="<?= $quizData['questionQ3']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="opt1" value="<?= $quizData['opt1']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="opt2" value="<?= $quizData['opt2']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="opt3" value="<?= $quizData['opt3']; ?>" type="text" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Correct Option 3</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="correct_opt3" value="<?= $quizData['correct_opt3']; ?>" type="text" required>
+        </div>
+    </div>
+
+    <!-- ID Vidéo -->
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">ID Vidéo</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="id_video" value="<?= $quizData['id_video']; ?>" type="number" required>
+        </div>
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="form-group row">
+        <div class="col-sm-12 col-md-10 offset-md-2">
+            <button type="submit" class="btn btn-primary">Modifier Quiz</button>
+        </div>
+    </div>
+</form>
+
+
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">
@@ -592,3 +593,10 @@
 	<script src="vendors/scripts/layout-settings.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+

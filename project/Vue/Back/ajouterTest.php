@@ -1,3 +1,44 @@
+<?php
+require_once '../../config.php';  // Assure-toi que le chemin est correct
+require_once '../../Model/Test.php';  // Assure-toi que le chemin vers Test.php est correct
+require_once '../../Controller/TestC.php';  // Assure-toi que le chemin vers TestC.php est correct
+
+// Vérifier si le formulaire est soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Récupérer les données du formulaire
+    $test_name = $_POST['test_name'];
+    $questionT1 = $_POST['questionT1'];
+    $reponseT1 = $_POST['reponseT1'];
+    $reponse_correcteT1 = $_POST['reponse_correcteT1'];
+
+    $questionT2 = $_POST['questionT2'];
+    $repT2 = $_POST['repT2'];
+    $rep_correcteT2 = $_POST['rep_correcteT2'];
+
+    $questionT3 = $_POST['questionT3'];
+    $reponT3 = $_POST['reponT3'];
+    $repon_correcteT3 = $_POST['repon_correcteT3'];
+
+    // Créer un objet Test avec les données récupérées
+    $test = new Test(
+        $test_name, $questionT1, $reponseT1, $reponse_correcteT1,
+        $questionT2, $repT2, $rep_correcteT2,
+        $questionT3, $reponT3, $repon_correcteT3
+    );
+
+    // Instancier le contrôleur et ajouter le test
+    $testController = new TestC();
+    $testController->ajouterTest($test);
+
+    // Message de succès
+    echo "<p>Le test a été ajouté avec succès !</p>";
+}
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -311,12 +352,12 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-12">
 							<div class="title">
-								<h4>QUIZ</h4>
+								<h4>TEST</h4>
 							</div>
 							<nav aria-label="breadcrumb" role="navigation">
 								<ol class="breadcrumb">
 									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-									<li class="breadcrumb-item active" aria-current="page">Add QUIZ</li>
+									<li class="breadcrumb-item active" aria-current="page">Add TEST</li>
 								</ol>
 							</nav>
 						</div>
@@ -327,159 +368,93 @@
 				<div class="pd-20 card-box mb-30">
 					<div class="clearfix">
 						<div class="pull-left">
-							<h4 class="text-blue h4">QUIZ</h4>
+							<h4 class="text-blue h4">TEST</h4>
 							<!--<p class="mb-30">All bootstrap element classies</p>-->
 						</div>
 						<div class="pull-right">
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">idQuiz</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">quiz_name</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="quiz_name" type="texte">
-							</div>
-						</div>
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">QUIZ</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">One</option>
-									<option value="2">Two</option>
-									<option value="3">Three</option>
-									<option value="4">Four</option>
-								</select>
-							</div>
-						</div>
+					
+                    <form method="POST" action="ajouterTest.php">
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="test_name" class="form-control" type="text" placeholder="Titre" required>
+        </div>
+    </div>
+    <!-- Ajoute d'autres champs ici -->
+    <button type="submit" class="btn btn-primary">Ajouter</button>
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">questionT1</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="questionT1" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">reponseT1</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="reponseT1" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">reponse_correcteT1</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="reponse_correcteT1" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">questionT2</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="questionT2" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">repT2</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="repT2" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">rep_correcteT2</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="rep_correcteT2" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">questionT3</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="questionT3" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">reponT3</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="reponT3" class="form-control" type="text">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">repon_correcteT3</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="repon_correcteT3" class="form-control" type="text">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>
+
+
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">

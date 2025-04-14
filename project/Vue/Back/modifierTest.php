@@ -1,3 +1,22 @@
+<?php
+require_once("../../Model/Test.php");
+require_once("../../Controller/TestC.php");
+
+if (!isset($_GET['idTest'])) {
+    echo "Identifiant du test manquant.";
+    exit;
+}
+
+$testC = new TestC();
+$testData = $testC->getTestById($_GET['idTest']);
+
+if (!$testData) {
+    echo "Test introuvable.";
+    exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -311,12 +330,12 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-12">
 							<div class="title">
-								<h4>QUIZ</h4>
+								<h4>TEST</h4>
 							</div>
 							<nav aria-label="breadcrumb" role="navigation">
 								<ol class="breadcrumb">
 									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-									<li class="breadcrumb-item active" aria-current="page">Add QUIZ</li>
+									<li class="breadcrumb-item active" aria-current="page">Add TEST</li>
 								</ol>
 							</nav>
 						</div>
@@ -327,159 +346,93 @@
 				<div class="pd-20 card-box mb-30">
 					<div class="clearfix">
 						<div class="pull-left">
-							<h4 class="text-blue h4">QUIZ</h4>
+							<h4 class="text-blue h4">TEST</h4>
 							<!--<p class="mb-30">All bootstrap element classies</p>-->
 						</div>
 						<div class="pull-right">
 							<a href="#basic-form1" class="btn btn-primary btn-sm scroll-click" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>
 						</div>
 					</div>
-					<form>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Titre</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" type="text" placeholder="Titre">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">Description</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" placeholder="Description" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">idQuiz</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="texte" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">quiz_name</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="quiz_name" type="texte">
-							</div>
-						</div>
-						
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">option3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_option1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">op3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_op2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">questionQ3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="question" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt1</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option1" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt2</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option2" type="texte">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="option3" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">correct_opt3</label>
-							<div class="col-sm-12 col-md-10">
-								<input class="form-control" value="correct_option" type="texte">
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-12 col-md-2 col-form-label">QUIZ</label>
-							<div class="col-sm-12 col-md-10">
-								<select class="custom-select col-12">
-									<option selected="">Choose...</option>
-									<option value="1">One</option>
-									<option value="2">Two</option>
-									<option value="3">Three</option>
-									<option value="4">Four</option>
-								</select>
-							</div>
-						</div>
+					
+                    <form method="POST" action="modifierTestT.php">
 
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-md-10 offset-md-2">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                        
-						
-						
-					</form>
+    <input type="hidden" name="idTest" value="<?= $testData['idTest'] ?>">
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="test_name" class="form-control" type="text" value="<?= $testData['test_name'] ?>" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">questionT1</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="questionT1" class="form-control" type="text" value="<?= $testData['questionT1'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">reponseT1</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="reponseT1" class="form-control" type="text" value="<?= $testData['reponseT1'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">reponse_correcteT1</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="reponse_correcteT1" class="form-control" type="text" value="<?= $testData['reponse_correcteT1'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">questionT2</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="questionT2" class="form-control" type="text" value="<?= $testData['questionT2'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">repT2</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="repT2" class="form-control" type="text" value="<?= $testData['repT2'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">rep_correcteT2</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="rep_correcteT2" class="form-control" type="text" value="<?= $testData['rep_correcteT2'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">questionT3</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="questionT3" class="form-control" type="text" value="<?= $testData['questionT3'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">reponT3</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="reponT3" class="form-control" type="text" value="<?= $testData['reponT3'] ?>">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">repon_correcteT3</label>
+        <div class="col-sm-12 col-md-10">
+            <input name="repon_correcteT3" class="form-control" type="text" value="<?= $testData['repon_correcteT3'] ?>">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Modifier</button>
+</form>
+
+
+
 					<div class="collapse collapse-box" id="basic-form1" >
 						<div class="code-box">
 							<div class="clearfix">
