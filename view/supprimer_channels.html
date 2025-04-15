@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Supprimer un Channel</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.css">
+  <link rel="stylesheet" href="css/templatemo-training-studio.css">
+  <link rel="stylesheet" href="css/channels.css">
+  <link rel="stylesheet" href="css/creation_channel.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header-area header-sticky">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <nav class="main-nav">
+          <a href="index.html" class="logo">
+            <img src="img/logo.png" alt="Logo" style="vertical-align: middle; height: 40px;">
+            Startup<em> Academy</em>
+          </a>
+          <ul class="nav">
+            <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
+            <li class="scroll-to-section"><a href="#features">About</a></li>
+            <li><a href="classes.html">Classes</a></li>
+            <li><a href="schedules.html">Schedules</a></li>
+            <li class="has-sub"><a href="javascript:void(0)">Cours</a>
+              <ul class="sub-menu">
+                <li><a href="video.html">Videos</a></li>
+                <li><a href="pdf.html">PDF</a></li>
+              </ul>
+            </li>
+            <li class="has-sub"><a href="javascript:void(0)">Exams</a>
+              <ul class="sub-menu">
+                <li><a href="test.html">Test</a></li>
+                <li><a href="quiz.html">Quiz</a></li>
+              </ul>
+            </li>
+            <li><a href="ProjetWeb/index.html">Annonces</a></li>
+            <li class="scroll-to-section"><a href="#contact-us">Contact</a></li>
+          </ul>
+          <a class="menu-trigger"><span>Menu</span></a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Supprimer Channel Form -->
+<div class="container mt-5 create-channel-container">
+  <h2 class="text-center mb-4">Supprimer un Channel</h2>
+  <form id="deleteChannelForm" action="../controler/DeleteChannelControler.php" method="POST" class="needs-validation" novalidate>
+    <div class="form-group">
+      <label for="channel-id">ID du Channel <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" id="channel-id" name="id" placeholder="Entrez l'ID du Channel" required>
+      <div class="invalid-feedback">Veuillez entrer un ID de channel valide.</div>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-danger">Supprimer le Channel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Scripts -->
+<script src="js/jquery-2.1.0.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/custom.js"></script>
+<script src="js/creation_channel.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+<script>
+  // Bootstrap form validation
+  (function () {
+    'use strict';
+    window.addEventListener('load', function () {
+      var form = document.getElementById('deleteChannelForm');
+      form.addEventListener('submit', function (event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    }, false);
+  })();
+</script>
+
+</body>
+</html>

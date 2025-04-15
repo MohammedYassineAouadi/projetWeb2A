@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modify Channel</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.css">
+  <link rel="stylesheet" href="css/templatemo-training-studio.css">
+  <link rel="stylesheet" href="css/channels.css">
+  <link rel="stylesheet" href="css/creation_channel.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header-area header-sticky">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <nav class="main-nav">
+          <a href="index.html" class="logo">
+            <img src="img/logo.png" alt="Logo" style="vertical-align: middle; height: 40px;">
+            Startup<em> Academy</em>
+          </a>
+          <ul class="nav">
+            <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
+            <li class="scroll-to-section"><a href="#features">About</a></li>
+            <li><a href="classes.html">Classes</a></li>
+            <li><a href="schedules.html">Schedules</a></li>
+            <li class="has-sub"><a href="javascript:void(0)">Cours</a>
+              <ul class="sub-menu">
+                <li><a href="video.html">Videos</a></li>
+                <li><a href="pdf.html">PDF</a></li>
+              </ul>
+            </li>
+            <li class="has-sub"><a href="javascript:void(0)">Exams</a>
+              <ul class="sub-menu">
+                <li><a href="test.html">Test</a></li>
+                <li><a href="quiz.html">Quiz</a></li>
+              </ul>
+            </li>
+            <li><a href="ProjetWeb/index.html">Annonces</a></li>
+            <li class="scroll-to-section"><a href="#contact-us">Contact</a></li>
+          </ul>
+          <a class="menu-trigger"><span>Menu</span></a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Modify Channel Form -->
+<div class="container mt-5 create-channel-container">
+  <h2 class="text-center mb-4">Modify Channel</h2>
+  <form id="modifyChannelForm" action="../controler/ModifyChannelControler.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+
+    <div class="form-group">
+      <label for="channel-id">Channel ID <span class="text-danger">*</span></label>
+      <input type="number" class="form-control" id="channel-id" name="id" placeholder="e.g. 123" required>
+      <div class="invalid-feedback">Please enter a valid channel ID.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="channel-name">Channel Name <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" id="channel-name" name="name" placeholder="e.g. general" maxlength="100" required>
+      <div class="invalid-feedback">Please enter a valid channel name (max 100 characters).</div>
+    </div>
+
+    <div class="form-group">
+      <label for="channel-description">Description <span class="text-danger">*</span></label>
+      <textarea class="form-control" id="channel-description" name="description" rows="4" placeholder="Describe the channel..." maxlength="255" required></textarea>
+      <div class="invalid-feedback">Please provide a description (max 255 characters).</div>
+    </div>
+
+    <div class="form-group">
+      <label for="channel-image">Channel Image (optional)</label>
+      <input type="file" class="form-control-file" id="channel-image" name="image_url" accept="image/*" onchange="previewImage(event)">
+      <img id="imagePreview" style="display: none; max-width: 200px; margin-top: 10px;" alt="Image Preview" />
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary">Modify Channel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Scripts -->
+<script src="js/jquery-2.1.0.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/custom.js"></script>
+<script src="js/modifier_channel.js"></script>
+
+</body>
+</html>
