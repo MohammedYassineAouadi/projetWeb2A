@@ -361,6 +361,8 @@ $quizzes = $quizController->afficherQuiz();
             <th>opt2</th>
             <th>opt3</th>
             <th>correct_opt3</th>
+			<th>idTest</th>
+
             <th class="datatable-nosort">Action</th>
         </tr>
     </thead>
@@ -386,6 +388,8 @@ $quizzes = $quizController->afficherQuiz();
                 <td><?= $quiz['opt2'] ?></td>
                 <td><?= $quiz['opt3'] ?></td>
                 <td><?= $quiz['correct_opt3'] ?></td>
+				<td><?= $quiz['idTest'] ?></td>
+
                 <td>
                     <div class="dropdown">
                         <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">

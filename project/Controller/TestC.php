@@ -119,7 +119,19 @@ public function getTestById($idTest) {
         echo "Erreur : " . $e->getMessage();
     }
 }
-
-
+public function enregistrerScore($iduser, $resultatQuiz = null, $resultatTest = null) {
+    $sql = "INSERT INTO score (iduser, resultatQuiz, resultatTest) VALUES (:iduser, :resultatQuiz, :resultatTest)";
+    
+    try {
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':iduser', $iduser, PDO::PARAM_INT);
+        $stmt->bindValue(':resultatQuiz', $resultatQuiz, PDO::PARAM_INT);
+        $stmt->bindValue(':resultatTest', $resultatTest, PDO::PARAM_INT);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+    }
 }
-?>
+}
+
+

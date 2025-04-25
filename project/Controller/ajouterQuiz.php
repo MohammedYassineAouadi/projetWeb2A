@@ -7,16 +7,17 @@ class QuizC {
         $sql = "INSERT INTO quizzes 
             (quiz_name, questionQ1, option1, option2, option3, correct_option1,
              questionQ2, op1, op2, op3, correct_op2,
-             questionQ3, opt1, opt2, opt3, correct_opt3, id_video)
+             questionQ3, opt1, opt2, opt3, correct_opt3, id_video, idTest)
             VALUES 
             (:quiz_name, :questionQ1, :option1, :option2, :option3, :correct_option1,
              :questionQ2, :op1, :op2, :op3, :correct_op2,
-             :questionQ3, :opt1, :opt2, :opt3, :correct_opt3, :id_video)";
+             :questionQ3, :opt1, :opt2, :opt3, :correct_opt3, :id_video, :idTest)";
 
         $db = config::getConnexion();
         try {
             $query = $db->prepare($sql);
 
+            // Lier les valeurs des paramètres avec les attributs de l'objet Quiz
             $query->bindValue(':quiz_name', $quiz->getQuizName());
             $query->bindValue(':questionQ1', $quiz->getQuestionQ1());
             $query->bindValue(':option1', $quiz->getOption1());
@@ -37,19 +38,21 @@ class QuizC {
             $query->bindValue(':correct_opt3', $quiz->getCorrectOpt3());
 
             $query->bindValue(':id_video', $quiz->getIdVideo());
+            $query->bindValue(':idTest', $quiz->getIdTest());
 
             $query->execute();
         } catch (PDOException $e) {
             echo "Erreur: " . $e->getMessage();
         }
     }
+
     public function deleteQuiz($idQuiz) {
-        // Préparer la requête de suppression
+        // Requête pour supprimer un quiz
         $sql = "DELETE FROM quizzes WHERE idQuiz = :idQuiz";
         $db = config::getConnexion();
         $stmt = $db->prepare($sql);
         
-        // Lier la valeur du paramètre :id à la variable $id
+        // Lier l'id du quiz
         $stmt->bindValue(':idQuiz', $idQuiz, PDO::PARAM_INT);
         try {
             $stmt->execute();
@@ -57,9 +60,9 @@ class QuizC {
             die('Erreur: ' . $e->getMessage());
         }
     }
+
     public function modifierQuiz($data) {
         $sql = "UPDATE quizzes SET 
-                   
                     quiz_name = :quiz_name,
                     questionQ1 = :questionQ1,
                     option1 = :option1,
@@ -75,51 +78,62 @@ class QuizC {
                     opt1 = :opt1,
                     opt2 = :opt2,
                     opt3 = :opt3,
-                    correct_opt3 = :correct_opt3
+                    correct_opt3 = :correct_opt3,
+                    idTest = :idTest
                 WHERE idQuiz = :idQuiz";
-            $db = config::getConnexion();
 
+        $db = config::getConnexion();
         $stmt = $db->prepare($sql);
-    
-        $stmt->bindValue(':idQuiz', $data['idQuiz']);
-        
-        $stmt->bindValue(':quiz_name', $data['quiz_name']);
-        $stmt->bindValue(':questionQ1', $data['questionQ1']);
-        $stmt->bindValue(':option1', $data['option1']);
-        $stmt->bindValue(':option2', $data['option2']);
-        $stmt->bindValue(':option3', $data['option3']);
-        $stmt->bindValue(':correct_option1', $data['correct_option1']);
-        $stmt->bindValue(':questionQ2', $data['questionQ2']);
-        $stmt->bindValue(':op1', $data['op1']);
-        $stmt->bindValue(':op2', $data['op2']);
-        $stmt->bindValue(':op3', $data['op3']);
-        $stmt->bindValue(':correct_op2', $data['correct_op2']);
-        $stmt->bindValue(':questionQ3', $data['questionQ3']);
-        $stmt->bindValue(':opt1', $data['opt1']);
-        $stmt->bindValue(':opt2', $data['opt2']);
-        $stmt->bindValue(':opt3', $data['opt3']);
-        $stmt->bindValue(':correct_opt3', $data['correct_opt3']);
-    
+
+        // Lier les données du formulaire
+        foreach ($data as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
         $stmt->execute();
     }
-    public function getQuizById($id)
-{
-    $sql = "SELECT * FROM quizzes WHERE idQuiz = :idQuiz";  // Assure-toi que la colonne est 'idQuiz' dans ta base
-    $db = config::getConnexion();
-    try {
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':idQuiz', $id);  // Binder l'ID reçu
-        $stmt->execute();
 
-    return $stmt->fetch();
+    public function getQuizById($id) {
+        $sql = "SELECT * FROM quizzes WHERE idQuiz = :idQuiz";
+        $db = config::getConnexion();
+        try {
+            $stmt = $db->prepare($sql);
+            $stmt->bindValue(':idQuiz', $id);
+            $stmt->execute();
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
     }
-    catch (Exception $e) {
-        die('Erreur: ' . $e->getMessage());
-    }
-      // Retourne le quiz correspondant
-}
 
+    public function submitQuiz() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Récupérer les réponses soumises
+            $score = 0;
+            if ($_POST['reponseQ1'] == 'option1') $score++; // Exemple de comparaison
+            if ($_POST['reponseQ2'] == 'option2') $score++; // Exemple de comparaison
+            if ($_POST['reponseQ3'] == 'option3') $score++; // Exemple de comparaison
+            
+            // Sauvegarder le score dans la base de données
+            $this->saveScore($_SESSION['user_id'], $score);
+            
+            // Redirection ou affichage du score
+            echo "Votre score : " . $score . "/3";
+            header("Location: results.php?score=" . $score);
+            exit;
+        }
+    }
     
+    private function saveScore($user_id, $score) {
+        // Enregistrer le score dans la base de données
+        $db = config::getConnexion(); // Connexion à la base de données
+        $sql = "INSERT INTO score (idUser, score) VALUES (:idUser, :score)";
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':idUser', $user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':score', $score, PDO::PARAM_INT);
+        $stmt->execute();
+    }
 }
 ?>
+
 

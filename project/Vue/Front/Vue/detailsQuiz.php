@@ -1,169 +1,87 @@
 <?php
 require_once __DIR__ . '/../../../config.php';
-require_once __DIR__ . '/../../../Controller/ajouterQuiz.php';
 
 if (!isset($_GET['idQuiz'])) {
     die('ID du quiz manquant.');
 }
 
-$id = $_GET['idQuiz'];
+$idQuiz = $_GET['idQuiz'];
 $db = config::getConnexion();
 
+// Récupérer les détails du quiz depuis la base de données
 $stmt = $db->prepare("SELECT * FROM quizzes WHERE idQuiz = ?");
-$stmt->execute([$id]);
+$stmt->execute([$idQuiz]);
 $quiz = $stmt->fetch();
 
 if (!$quiz) {
     die('Quiz introuvable.');
 }
 
-// Si le formulaire est soumis, traiter la réponse
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Récupérer les réponses
-    $reponseQ1 = $_POST['reponseQ1'];
-    $reponseQ2 = $_POST['reponseQ2'];
-    $reponseQ3 = $_POST['reponseQ3'];
-
-    // Vérifier les réponses (ajuster selon la logique de ton quiz)
+// Calcul du score
+$score = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $score = 0;
-    if ($reponseQ1 == $quiz['correct_option1']) {
-        $score++;
-    }
-    if ($reponseQ2 == $quiz['correct_op2']) {
-        $score++;
-    }
-    if ($reponseQ3 == $quiz['correct_opt3']) {
-        $score++;
-    }
 
-    echo "<h3 class='alert alert-success'>Votre score: $score/3</h3>";
+    // Récupérer les réponses de l'utilisateur
+    $reponseQ1 = isset($_POST['q1']) ? $_POST['q1'] : '';
+    $reponseQ2 = isset($_POST['q2']) ? $_POST['q2'] : '';
+    $reponseQ3 = isset($_POST['q3']) ? $_POST['q3'] : '';
+
+    // Comparer les réponses avec les bonnes réponses
+    if ($reponseQ1 === (isset($quiz['correct_option1']) ? $quiz['correct_option1'] : '')) $score++;
+    if ($reponseQ2 === (isset($quiz['correct_op2']) ? $quiz['correct_op2'] : '')) $score++;
+    if ($reponseQ3 === (isset($quiz['correct_opt3']) ? $quiz['correct_opt3'] : '')) $score++;
+
+    // Récupérer l'ID de l'utilisateur (par exemple, stocké dans la session ou via un champ caché)
+    $idUser = 1;  // Remplace par l'ID réel de l'utilisateur
+    // Mettre à jour le score dans la base de données
+    $stmt = $db->prepare("UPDATE score SET resultatQuiz = ? WHERE idUser = ? AND idQuiz = ?");
+    $stmt->execute([$score, $idUser, $idQuiz]);
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($quiz['quiz_name']) ?></title>
-    <!-- Intégration de Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ajout de notre propre CSS -->
-    <style>
-        body {
-            background-color: #f4f7f6;
-            font-family: Arial, sans-serif;
-        }
-        .quiz-container {
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
-        h2 {
-            color: #007bff;
-        }
-        h4 {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: #333;
-        }
-        .question {
-            margin-bottom: 20px;
-        }
-        .btn {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .alert {
-            text-align: center;
-            font-size: 1.5em;
-        }
-        .back-link {
-            margin-top: 20px;
-            display: block;
-            text-align: center;
-            font-size: 1.1em;
-        }
-        .back-link a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        .back-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Test - Détails</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
 </head>
+
 <body>
-
-<div class="container">
-    <div class="quiz-container">
-        <h2 class="text-center"><?= htmlspecialchars($quiz['quiz_name']) ?></h2>
-
-        <form method="POST">
-            <!-- Question 1 -->
-            <div class="question">
-                <h4><?= $quiz['questionQ1'] ?></h4>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ1" value="1" id="option1" required>
-                    <label class="form-check-label" for="option1"><?= $quiz['option1'] ?></label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ1" value="2" id="option2" required>
-                    <label class="form-check-label" for="option2"><?= $quiz['option2'] ?></label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ1" value="3" id="option3" required>
-                    <label class="form-check-label" for="option3"><?= $quiz['option3'] ?></label>
-                </div>
-            </div>
-
-            <!-- Question 2 -->
-            <div class="question">
-                <h4><?= $quiz['questionQ2'] ?></h4>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ2" value="1" id="op1" required>
-                    <label class="form-check-label" for="op1"><?= $quiz['op1'] ?></label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ2" value="2" id="op2" required>
-                    <label class="form-check-label" for="op2"><?= $quiz['op2'] ?></label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ2" value="3" id="op3" required>
-                    <label class="form-check-label" for="op3"><?= $quiz['op3'] ?></label>
-                </div>
-            </div>
-
-            <!-- Question 3 -->
-            <div class="question">
-                <h4><?= $quiz['questionQ3'] ?></h4>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ3" value="1" id="opt1" required>
-                    <label class="form-check-label" for="opt1"><?= $quiz['opt1'] ?></label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ3" value="2" id="opt2" required>
-                    <label class="form-check-label" for="opt2"><?= $quiz['opt2'] ?></label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="reponseQ3" value="3" id="opt3" required>
-                    <label class="form-check-label" for="opt3"><?= $quiz['opt3'] ?></label>
-                </div>
-            </div>
-
-            <!-- Submit button -->
-            <button type="submit" class="btn btn-primary">Valider le quiz</button>
-        </form>
-
-        <div class="back-link">
-            <a href="Quiz.php">← Retour à la liste des quiz</a>
+    <!-- Affichage du score -->
+    <?php if ($score !== null): ?>
+        <div class="alert alert-success">
+            ✅ Votre score : <strong><?= $score ?>/3</strong>
         </div>
-    </div>
-</div>
+    <?php endif; ?>
 
-<!-- Scripts Bootstrap -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Formulaire pour répondre aux questions -->
+    <form method="POST">
+        <p>Question 1 : <?= htmlspecialchars($quiz['questionQ1'] ?? 'Question 1') ?></p>
+        <input type="radio" name="q1" value="<?= htmlspecialchars($quiz['option1'] ?? '') ?>" /> <?= htmlspecialchars($quiz['option1'] ?? 'Option 1') ?><br>
+        <input type="radio" name="q1" value="<?= htmlspecialchars($quiz['option2'] ?? '') ?>" /> <?= htmlspecialchars($quiz['option2'] ?? 'Option 2') ?><br>
+        <input type="radio" name="q1" value="<?= htmlspecialchars($quiz['option3'] ?? '') ?>" /> <?= htmlspecialchars($quiz['option3'] ?? 'Option 3') ?><br>
+
+        <p>Question 2 : <?= htmlspecialchars($quiz['questionQ2'] ?? 'Question 2') ?></p>
+        <input type="radio" name="q2" value="<?= htmlspecialchars($quiz['op1'] ?? '') ?>" /> <?= htmlspecialchars($quiz['op1'] ?? 'Option 1') ?><br>
+        <input type="radio" name="q2" value="<?= htmlspecialchars($quiz['op2'] ?? '') ?>" /> <?= htmlspecialchars($quiz['op2'] ?? 'Option 2') ?><br>
+        <input type="radio" name="q2" value="<?= htmlspecialchars($quiz['op3'] ?? '') ?>" /> <?= htmlspecialchars($quiz['op3'] ?? 'Option 3') ?><br>
+
+        <p>Question 3 : <?= htmlspecialchars($quiz['questionQ3'] ?? 'Question 3') ?></p>
+        <input type="radio" name="q3" value="<?= htmlspecialchars($quiz['opt1'] ?? '') ?>" /> <?= htmlspecialchars($quiz['opt1'] ?? 'Option 1') ?><br>
+        <input type="radio" name="q3" value="<?= htmlspecialchars($quiz['opt2'] ?? '') ?>" /> <?= htmlspecialchars($quiz['opt2'] ?? 'Option 2') ?><br>
+        <input type="radio" name="q3" value="<?= htmlspecialchars($quiz['opt3'] ?? '') ?>" /> <?= htmlspecialchars($quiz['opt3'] ?? 'Option 3') ?><br>
+
+        <input type="hidden" name="iduser" value="1"> <!-- ID utilisateur (ajuste cela avec la variable de session ou d'autres méthodes) -->
+
+        <button type="submit" class="btn btn-primary">Soumettre</button>
+    </form>
+
+    <script src="../assets/js/jquery-2.1.0.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
 </body>
+
 </html>

@@ -2,12 +2,17 @@
 require_once '../../config.php';
 require_once '../../Model/Quiz.php';
 require_once '../../Controller/ajouterQuiz.php';
+require_once '../../Controller/TestC.php';
 
 $errors = [];
 $quiz_name = $questionQ1 = $option1 = $option2 = $option3 = $correct_option1 = "";
 $questionQ2 = $op1 = $op2 = $op3 = $correct_op2 = "";
 $questionQ3 = $opt1 = $opt2 = $opt3 = $correct_opt3 = "";
 $id_video = "";
+$idTest=null;
+$testController = new TestC();
+$tests = $testController->afficherTests(); // Méthode qui retourne tous les tests
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Nettoyage des inputs
@@ -31,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $correct_opt3 = trim($_POST['correct_opt3']);
 
     $id_video = trim($_POST['id_video']);
+    $idTest =$_POST['idTest'] ?? null ;
 
     // Contrôles
     if (empty($quiz_name)) $errors['quiz_name'] = "❌ Le titre est requis.";
@@ -54,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $quiz_name, $questionQ1, $option1, $option2, $option3, $correct_option1,
             $questionQ2, $op1, $op2, $op3, $correct_op2,
             $questionQ3, $opt1, $opt2, $opt3, $correct_opt3,
-            $id_video
+            $id_video, (int)$idTest
         );
         $quizController = new QuizC();
         $quizController->ajouterQuiz($quiz);
@@ -65,6 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $questionQ2 = $op1 = $op2 = $op3 = $correct_op2 = "";
         $questionQ3 = $opt1 = $opt2 = $opt3 = $correct_opt3 = "";
         $id_video = "";
+		$idTest=null;
+
     }
 }
 ?>
@@ -542,6 +550,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endif; ?>
         </div>
     </div>
+	<div class="form-group row">
+    <label class="col-sm-12 col-md-2 col-form-label">ID Test</label>
+    <div class="col-sm-12 col-md-10">
+        <select class="form-control" name="idTest" >
+            <option value="">-- Choisir un test --</option>
+            <?php foreach ($tests as $test): ?>
+                <option value="<?= $test['idTest'] ?>" <?= (isset($_POST['idTest']) && $_POST['idTest'] == $test['idTest']) ? 'selected' : '' ?>>
+              <?= $test['idTest'] ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <?php if (isset($errors['idTest'])): ?>
+            <small style="color: red;"><?= $errors['idTest'] ?></small>
+        <?php endif; ?>
+    </div>
+</div>
+
 
     <!-- Bouton de soumission -->
     <div class="form-group row">

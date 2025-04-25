@@ -16,12 +16,10 @@ if (!$test) {
     die('Test introuvable.');
 }
 
-// Fonction pour nettoyer une réponse (espace + minuscules)
 function nettoyer($str) {
     return strtolower(trim($str));
 }
 
-// Traitement du formulaire
 $score = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,17 +29,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rep2 = isset($_POST['reponseT2']) ? nettoyer($_POST['reponseT2']) : '';
     $rep3 = isset($_POST['reponseT3']) ? nettoyer($_POST['reponseT3']) : '';
 
-    if ($rep1 === nettoyer($test['reponse_correcteT1'])) {
-        $score++;
-    }
-    if ($rep2 === nettoyer($test['rep_correcteT2'])) {
-        $score++;
-    }
-    if ($rep3 === nettoyer($test['repon_correcteT3'])) {
-        $score++;
-    }
+    if ($rep1 === nettoyer($test['reponse_correcteT1'])) $score++;
+    if ($rep2 === nettoyer($test['rep_correcteT2'])) $score++;
+    if ($rep3 === nettoyer($test['repon_correcteT3'])) $score++;
 }
 ?>
+
+<!-- Affichage du score -->
+<?php if ($score !== null): ?>
+    <div class="alert alert-success">
+        ✅ Votre score : <strong><?= $score ?>/3</strong>
+    </div>
+
+    <?php if ($score >= 2): ?>
+        <div class="alert alert-info mt-2">
+            ✅ Score suffisant ! <a href="Quiz.php" class="btn btn-primary">Accéder au Quiz</a>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-danger">
+            ❌ Vous devez avoir au moins 2/3 pour accéder au quiz.
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>

@@ -4,7 +4,15 @@ require_once __DIR__ . '/../../../Controller/TestC.php';
 
 $testC = new TestC();
 $listeTest = $testC->afficherTests();
+
+$score = $_GET['score'] ?? null;
 ?>
+<?php if ($score !== null): ?>
+    <div class="alert alert-success">
+        ✅ Votre score : <strong><?= $score ?>/3</strong>
+    </div>
+<?php endif; ?>
+
 
 
 

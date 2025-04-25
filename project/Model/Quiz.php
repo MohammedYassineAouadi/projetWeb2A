@@ -20,12 +20,13 @@ class Quiz {
     private $correct_opt3;
 
     private $id_video;
+    private $idTest; // 🆕 Attribut ajouté
 
     public function __construct(
         $quiz_name, $questionQ1, $option1, $option2, $option3, $correct_option1,
         $questionQ2, $op1, $op2, $op3, $correct_op2,
         $questionQ3, $opt1, $opt2, $opt3, $correct_opt3,
-        $id_video
+        $id_video, $idTest // 🆕 Paramètre ajouté
     ) {
         $this->quiz_name = $quiz_name;
         $this->questionQ1 = $questionQ1;
@@ -47,6 +48,7 @@ class Quiz {
         $this->correct_opt3 = $correct_opt3;
 
         $this->id_video = $id_video;
+        $this->idTest = $idTest; // 🆕 Initialisation
     }
 
     // Getters
@@ -70,5 +72,6 @@ class Quiz {
     public function getCorrectOpt3() { return $this->correct_opt3; }
 
     public function getIdVideo() { return $this->id_video; }
+    public function getIdTest() { return $this->idTest; } // 🆕 Getter
 }
 ?>
