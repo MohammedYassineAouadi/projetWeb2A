@@ -1,14 +1,24 @@
 <?php
 require_once(__DIR__ . "/../../../config.php");
 
+session_start();
+
+// Vérifie si l'utilisateur est connecté
+if (!isset($_SESSION['id_utilisateur'])) {
+    echo "Utilisateur non connecté.";
+    exit;
+}
+
+$id_utilisateur = $_SESSION['id_utilisateur'];  // Utilisateur connecté
+
 if (!isset($_GET['id_video'])) {
     echo "Aucune vidéo sélectionnée.";
     exit;
 }
 
-$id_video = $_GET['id_video'];
+$id_video = $_GET['id_video'];  // ID de la vidéo
 
-// Connexion à la base
+// Connexion à la base de données
 $pdo = config::getConnexion();
 
 // Récupérer les infos de la vidéo
@@ -16,6 +26,16 @@ $stmt = $pdo->prepare("SELECT * FROM video WHERE id_video = :id_video");
 $stmt->execute(['id_video' => $id_video]);
 $video = $stmt->fetch();
 
+$stmt = $pdo->prepare("SELECT note FROM video_rating WHERE id_utilisateur = :id_utilisateur AND id_video = :id_video ORDER BY id_rating DESC LIMIT 1");
+$stmt->execute([
+    'id_utilisateur' => $id_utilisateur,
+    'id_video' => $id_video
+]);
+$lastNote = 0;
+
+if ($row = $stmt->fetch()) {
+    $lastNote = (int)$row['note'];
+}
 if (!$video) {
     echo "Vidéo introuvable.";
     exit;
@@ -133,6 +153,75 @@ https://templatemo.com/tm-548-training-studio
         <p><strong>Description :</strong> <?= htmlspecialchars($video['description']) ?></p>
         <p><strong>Durée :</strong> <?= htmlspecialchars($video['duree']) ?> minutes</p>
         <p><strong>Date_ajout :</strong> <?= htmlspecialchars($video['date_ajout']) ?></p>
+
+        <h5 class="mt-5">Donnez votre avis :</h5>
+        <!-- Affichage des anciens commentaires de l'utilisateur -->
+<!-- Affichage des anciens commentaires de l'utilisateur -->
+<!-- Formulaire de note et commentaire -->
+<form action="save_rating.php" method="POST" class="mb-5">
+    <input type="hidden" name="id_video" value="<?= htmlspecialchars($video['id_video']) ?>">
+
+    <!-- 1. Saisie des étoiles -->
+    <div class="mb-3">
+        <label class="form-label">Votre note :</label><br>
+        <div class="star-rating">
+            <?php for ($i = 5; $i >= 1; $i--): ?>
+                <input type="radio" id="star<?= $i ?>" name="note" value="<?= $i ?>" <?= ($i == $lastNote) ? 'checked' : '' ?>>
+                <label for="star<?= $i ?>" title="<?= $i ?> étoiles">&#9733;</label>
+            <?php endfor; ?>
+        </div>
+    </div>
+
+    <!-- 2. Anciennes notes et commentaires -->
+    <?php
+    $stmt = $pdo->prepare("SELECT commentaire, note, date_avis FROM video_rating WHERE id_utilisateur = :id_utilisateur AND id_video = :id_video ORDER BY date_avis DESC");
+    $stmt->execute([
+        'id_utilisateur' => $id_utilisateur,
+        'id_video' => $video['id_video']
+    ]);
+    $commentaires = $stmt->fetchAll();
+    ?>
+
+    <?php if ($commentaires): ?>
+        <h4 class="mb-3">Vos commentaires précédents</h4>
+        <div class="list-group mb-4">
+            <?php foreach ($commentaires as $com): ?>
+                <div class="list-group-item p-4 rounded shadow-sm mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted"><?= date('d/m/Y à H:i', strtotime($com['date_avis'])) ?></small>
+                        <div>
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <i class="bi <?= ($i <= $com['note']) ? 'bi-star-fill text-warning' : 'bi-star text-muted' ?>"></i>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+                    <div>
+                        <?php if (!empty($com['commentaire'])): ?>
+                            <p class="mb-0"><?= nl2br(htmlspecialchars($com['commentaire'])) ?></p>
+                        <?php else: ?>
+                            <p class="text-muted fst-italic mb-0">Aucun commentaire ajouté.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- 3. Saisie du commentaire (après les anciens commentaires) -->
+    <div class="mb-3">
+        <label for="commentaire" class="form-label">Ajouter un commentaire (optionnel)</label>
+        <textarea class="form-control" name="commentaire" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+</form>
+
+
+
+
+
+
+
 
         <a href="pdf.php" class="btn btn-secondary mt-3">← Retour</a>
     </div>

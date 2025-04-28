@@ -2,15 +2,17 @@
 require_once "../../Model/pdf.php";
 require_once "../../Controller/pdfC.php";
 
-// Vérifie que tous les champs nécessaires au PDF sont présents
+// Vérifie que tous les champs nécessaires au PDF sont présents(tous les champs sont rempli)
 if (
-    isset($_POST["id_pdf"], $_POST["titre"], $_POST["Type"], $_POST["url"])
+    isset($_POST["id_pdf"], $_POST["titre"], $_POST["Type"], $_POST["url"] , $_POST["description_P"])
 ) {
     // Nettoyage des données
     $id_pdf = (int)$_POST["id_pdf"];
     $titre = trim($_POST["titre"]);
     $type = trim($_POST["Type"]);
     $url = trim($_POST["url"]);
+    $description_P = trim($_POST["description_P"]);
+
 
     // Contrôles de saisie
     $errors = [];
@@ -24,7 +26,11 @@ if (
     if (empty($type) || $type == "Choose...") {
         $errors['Type'] = " Le type est obligatoire.";
     }
-
+    if (empty($description_P)) {
+        $errors['description_P'] = "❌ La description est obligatoire.";
+    } elseif (strlen($description_P) < 5) {
+        $errors['description_P'] = "❌ La description doit contenir au moins 5 caractères.";
+    }
     if (empty($url)) {
         $errors['url'] = " L'URL est obligatoire.";
     } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
@@ -41,7 +47,7 @@ if (
     }
 
     // Création et mise à jour du PDF
-    $pdf = new Pdf($titre, $type, $url, $id_pdf);
+    $pdf = new Pdf($titre, $type, $url, $description_P, $id_pdf );
     $pdfC = new PdfC();
     $pdfC->updatePdf($pdf, $id_pdf);
 

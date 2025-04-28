@@ -10,7 +10,7 @@ $errors = [];
 
 // Récupération des ID PDF pour le select
 $pdfController = new pdfC();
-$pdfs = $pdfController->afficherPdfs(); // Assure-toi que cette méthode existe dans pdfC
+$pdfs = $pdfController->afficherPdfs(); 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Nettoyage des données

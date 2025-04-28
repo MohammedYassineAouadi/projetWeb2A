@@ -360,9 +360,9 @@ if (!$pdfData) {
         <div class="col-sm-12 col-md-10">
             <select class="custom-select col-12" name="Type" >
                 <option value="">Choisir...</option>
-                <option value="Type1" <?= $pdfData['Type'] == 'Type1' ? 'selected' : '' ?>>Type1</option>
-                <option value="Type2" <?= $pdfData['Type'] == 'Type2' ? 'selected' : '' ?>>Type2</option>
-                <option value="Type3" <?= $pdfData['Type'] == 'Type3' ? 'selected' : '' ?>>Type3</option>
+                <option value="Php" <?= $pdfData['Type'] == 'Php' ? 'selected' : '' ?>>Php</option>
+                <option value="JavaScript" <?= $pdfData['Type'] == 'JavaScript' ? 'selected' : '' ?>>JavaScript</option>
+                <option value="Html" <?= $pdfData['Type'] == 'Html' ? 'selected' : '' ?>>Html</option>
             </select>
 			<?php if (isset($errors['Type'])): ?>
             <small style="color: red;"><?= $errors['Type'] ?></small>
@@ -370,6 +370,15 @@ if (!$pdfData) {
         </div>
     </div>
 
+	<div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">description</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="description_P" value="<?= htmlspecialchars($pdfData['description_P']) ?>" >
+			<?php if (isset($errors['description_P'])): ?>
+            <small style="color: red;"><?= $errors['description_P'] ?></small>
+        <?php endif; ?>
+        </div>
+    </div>
     <!-- URL -->
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">URL</label>

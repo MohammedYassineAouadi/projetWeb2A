@@ -1,12 +1,24 @@
 <?php
+require_once "../../Controller/categoryC.php";
+require_once "../../Controller/pdfC.php";
+
+
 // Initialisation des variables
-$titre = $Type = $url = "";
+$titre = $Type = $url = $description_P = "";
+$id_category = null;
+
 $errors = [];
+
+$pdfController = new CategoryC();
+$pdfs = $pdfController->getAllCategories();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $titre = trim($_POST["titre"]);
     $Type = $_POST["Type"];
     $url = trim($_POST["url"]);
+	$description_P = trim($_POST["description_P"]);
+    $id_category = $_POST["id_category"] ?? null;
+
 
     // Vérifications
     if (empty($titre)) {
@@ -18,17 +30,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($Type) || $Type == "Choose...") {
         $errors['Type'] = " Veuillez sélectionner un type.";
     }
-
+	if (empty($description_P)) {
+        $errors['description_P'] = "❌ La description est obligatoire.";
+    } elseif (strlen($description_P) < 5) {
+        $errors['description_P'] = "❌ La description doit contenir au moins 5 caractères.";
+    }
     if (empty($url)) {
         $errors['url'] = " L'URL est obligatoire.";
     } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
         $errors['url'] = " L'URL n'est pas valide.";
     }
-
+	if (empty($id_category) || !is_numeric($id_category)) {
+        $errors['id_category'] = "❌ Veuillez sélectionner un ID PDF valide.";
+    }
     // Si pas d'erreurs : on ajoute
     if (empty($errors)) {
         require_once "../../Controller/pdfC.php";
-        $pdf = new Pdf($titre, $Type, $url);
+        $pdf = new Pdf($titre, $Type, $url, $description_P,(int)$id_category);
         $pdfController = new PdfC();
         $pdfAjoute = $pdfController->ajouterPdf($pdf);
 
@@ -37,6 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $titre = "";
             $Type = "";
             $url = "";
+			$description_P = "";
+            $id_category = null;
+
+
         } else {
             echo "<p style='color: red;'> Erreur lors de l'ajout du PDF.</p>";
         }
@@ -318,8 +340,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <span class="micon dw dw-library"></span><span class="mtext">Cours</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="Add video.html">Add video</a></li>
-                                <li><a href="Video List.html">Video List</a></li>
+                                <li><a href="afficherVideo.php">Add video</a></li>
+                                <li><a href="ajouterVideo.php">Video List</a></li>
                                 <li><a href="ajouter_pdf.php">Add PDF</a></li>
 							<li><a href="Aafficherpdf.php">PDF List</a></li>
                             </ul>
@@ -386,16 +408,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="col-sm-12 col-md-10">
             <select class="custom-select col-12" name="Type">
                 <option>Choose...</option>
-                <option value="Type1" <?= $Type == 'Type1' ? 'selected' : '' ?>>Type1</option>
-                <option value="Type2" <?= $Type == 'Type2' ? 'selected' : '' ?>>Type2</option>
-                <option value="Type3" <?= $Type == 'Type3' ? 'selected' : '' ?>>Type3</option>
+                <option value="Php" <?= $Type == 'Php' ? 'selected' : '' ?>>Php</option>
+                <option value="JavaScript" <?= $Type == 'JavaScript' ? 'selected' : '' ?>>JavaScript</option>
+                <option value="JavaScript" <?= $Type == 'JavaScript' ? 'selected' : '' ?>>Html</option>
             </select>
             <?php if (isset($errors['Type'])): ?>
                 <small style="color: red;"><?= $errors['Type'] ?></small>
             <?php endif; ?>
         </div>
     </div>
-
+	<div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">descpription</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" type="text" name="description_P" value="<?= htmlspecialchars($description_P) ?>">
+            <?php if (isset($errors['description_p'])): ?>
+                <small style="color: red;"><?= $errors['description_P'] ?></small>
+            <?php endif; ?>
+        </div>
+    </div>
+	<?php
+if (!isset($id_category)) {
+    $id_category = '';
+}
+?>
+	<div class="form-group">
+            <label>ID category</label>
+            <select class="form-control" name="id_category">
+                <option value="">-- Sélectionner --</option>
+                <?php foreach ($pdfs as $Category): ?>
+                    <option value="<?= $Category['id_category'] ?>" <?= ($id_category == $Category['id_category']) ? 'selected' : '' ?>>
+                        <?= $Category['id_category'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            
+        </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">URL</label>
         <div class="col-sm-12 col-md-10">

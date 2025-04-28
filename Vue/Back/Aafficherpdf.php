@@ -1,11 +1,10 @@
 <?php
-require_once(__DIR__ . "/../../config.php"); // Vérifie le chemin correct
+require_once(__DIR__ . "/../../config.php"); 
 
-// Obtenir la connexion PDO
 $pdo = config::getConnexion();
 
 // Récupérer les PDFs
-$sql = "SELECT * FROM pdf"; // Remplace 'pdfs' par le nom réel de ta table
+$sql = "SELECT * FROM pdf"; 
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $pdfs = $stmt->fetchAll();
@@ -342,6 +341,8 @@ $pdfs = $stmt->fetchAll();
 									<th>id</th>
 									<th>Url</th>
 									<th>Type</th>
+									<th>descpription</th>
+
 
 									<th class="datatable-nosort">Action</th>
 								</tr>
@@ -356,6 +357,8 @@ $pdfs = $stmt->fetchAll();
 									echo "<td>" . htmlspecialchars($pdf['id_pdf']) . "</td>";
 									echo "<td>" . htmlspecialchars($pdf['url']) . "</td>";
 									echo "<td>" . htmlspecialchars($pdf['Type']) . "</td>";
+									echo "<td>" . htmlspecialchars($pdf['description_P']) . "</td>";
+
 
 									echo "<td><a href='" . htmlspecialchars($pdf['url']) . "' target='_blank'>Voir PDF</a></td>";
 									

@@ -1,8 +1,53 @@
 <?php
 require_once "../../../controller/pdfC.php";
+require_once "../../../Controller/categoryC.php";
 
+session_start();
+
+
+$_SESSION['id']=1;  // Utilisateur connecté
+
+
+$categoryController = new CategoryC();
 $pdfC = new PdfC();
-$pdfs = $pdfC->afficherPdfs(); // Ou getAllPdf() si c'est ton nom
+
+
+
+
+$pdfs = $pdfC->afficherPdfs(); // Tous les PDFs par défaut
+$categories = $categoryController->getAllCategories();
+
+// Par défaut, on affiche tous les PDFs
+$afficher = $pdfs;
+
+// Si une recherche est effectuée
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search']) && !empty($_POST['id_category'])) {
+    $id_category = $_POST['id_category'];
+    $list = $categoryController->getPdfsByCategory($id_category);
+
+    // Si on a trouvé des PDFs dans cette catégorie
+    if (!empty($list)) {
+        $afficher = $list;
+    } else {
+        $afficher = []; // Aucune correspondance
+    }
+}
+?>
+<?php
+// Récupérer l'ID de l'utilisateur depuis la session
+$userId = $_SESSION['id'];  // Assurez-vous que l'utilisateur est bien connecté
+$pdo = config::getConnexion(); // Connexion à la base
+
+// Requête SQL pour récupérer la progression de l'utilisateur pour chaque PDF
+$query = $pdo->prepare('
+    SELECT p.id_pdf, p.pages_lues, p.total_pages, p.pourcentage 
+    FROM progression_lecture p
+    WHERE p.id = :userId
+');
+$query->execute([':userId' => $userId]);
+
+// Récupérer les résultats
+$progressions = $query->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +75,8 @@ https://templatemo.com/tm-548-training-studio
     <link rel="stylesheet" type="text/css" href="../assets/css/font-awesome.css">
 
     <link rel="stylesheet" href="../assets/css/templatemo-training-studio.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
 
     </head>
 
@@ -83,45 +130,90 @@ https://templatemo.com/tm-548-training-studio
     </header>
     <section class="section" id="trainers">
     <div class="container">
+    <div class="row">
+    
+</div>
+<section class="section" id="trainers">
+    <div class="container">
         <div class="row">
             <div class="col-lg-6 offset-lg-3">
                 <div class="section-heading">
-                    <h2><em>PDF files</em></h2>
+                    <h2><em class="course-title">Course</em></h2>
                     <img src="../assets/images/line-dec.png" alt="">
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <?php foreach ($pdfs as $pdf): ?>
-            <div class="col-lg-4">
-                <div class="trainer-item">
-                <div class="pdf-thumb">
-    <img src="../uploads/pdf.png" alt="" width="100%" height="320px" style="object-fit: cover; border-radius: 10px;">
+        <!-- Barre de recherche par titre -->
+<!-- 🔍 Barre de recherche fixe -->
+<div class="search-title-bar">
+    <input type="text" id="searchInput" placeholder="📝 Rechercher un cours...">
 </div>
 
+
+        <!-- Résultats de recherche -->
+    </div>
+</section>
+<div class="search-form-container">
+    <form method="POST" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <label for="categorySelect" style="margin: 0; font-weight: 500;">🔎 Catégorie :</label>
+        <select name="id_category" id="categorySelect" style="padding: 5px 10px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="">-- Choisir --</option>
+            <?php foreach ($categories as $cat): ?>
+                <option value="<?= $cat['id_category'] ?>" 
+                    <?= (isset($_POST['id_category']) && $_POST['id_category'] == $cat['id_category']) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($cat['nom_C']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <input type="submit" value="Rechercher" name="search" style="padding: 5px 15px; background-color: #cc5500; border: none; border-radius: 5px; color: white; cursor: pointer;">
+    </form>
+</div>
+
+
 <br> </br>
+<?php if (!empty($afficher)): ?> 
+    <div class="row" id="searchResults">
+    <?php foreach ($afficher as $pdf): ?>
+
+            <?php
+            // Vérifier si la progression existe pour ce PDF
+            $progress = null;
+            foreach ($progressions as $prog) {
+                if ($prog['id_pdf'] == $pdf['id_pdf']) {
+                    $progress = $prog; // On trouve la progression de ce PDF
+                    break;
+                }
+            }
+            ?>
+            <div class="col-lg-4 pdf-item">
+                <div class="trainer-item">
+                    <div class="pdf-thumb">
+                        <img src="../uploads/cour.png" alt="" width="100%" height="180px" style="object-fit: cover; border-radius: 10px;">
+                    </div>
                     <div class="down-content">
-                        <h4><?= htmlspecialchars($pdf['titre']) ?></h4>
+                        <h4 class="pdf-title"><?= htmlspecialchars($pdf['titre']) ?></h4>
                         <p><?= htmlspecialchars($pdf['Type']) ?></p>
+                        <p><?= htmlspecialchars($pdf['description_P']) ?></p>
 
-                        <!-- Bouton pour l'ouvrir dans un nouvel onglet -->
-                        <a href="voirPdf.php?id_pdf=<?= htmlspecialchars($pdf['id_pdf']) ?>" class="btn btn-primary mt-2">
-    Ouvrir le PDF
-</a>
+                       <!-- Afficher la progression de lecture si elle existe -->
+                       <?php if ($progress): ?>
+                            <p>Pages lues: <?= $progress['pages_lues'] ?> / <?= $progress['total_pages'] ?></p>
+                            <p>Progression: <?= round($progress['pourcentage'], 2) ?>%</p>
+                        <?php else: ?>
+                            <p>Pas encore commencé</p>
+                        <?php endif; ?>
 
-                        </a>
-
-                <!-- Bouton Video pour accéder à une page de vidéos -->
-                <a href="video.php?id_pdf=<?= htmlspecialchars($pdf['id_pdf']) ?>" class="btn btn-secondary mt-2">
-                    Videos
-                </a>
+                        <a href="voirPdf.php?id_pdf=<?= htmlspecialchars($pdf['id_pdf']) ?>&url=<?= urlencode($pdf['url']) ?>" class="btn btn-warning btn-orange-dark mt-3">Voir le PDF</a>
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
-        </div>
+        <?php endforeach; ?>
     </div>
+<?php elseif (isset($_POST['search'])): ?>
+    <p>Aucun PDF trouvé pour cette catégorie.</p>
+<?php endif; ?>
+
+
 </section>
 
 
@@ -188,6 +280,23 @@ https://templatemo.com/tm-548-training-studio
             </div>
         </div>
     </footer>
+
+    <script>
+document.getElementById('searchInput').addEventListener('input', function () {
+    const query = this.value.trim().toLowerCase();
+    const pdfItems = document.querySelectorAll('.pdf-item');
+
+    pdfItems.forEach(item => {
+        const title = item.querySelector('.pdf-title').textContent.toLowerCase();
+        if (title.startsWith(query) || query === '') {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+</script>
+
 </body>
 
 </html>
