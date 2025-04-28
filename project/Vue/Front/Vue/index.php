@@ -1,3 +1,7 @@
+<?php
+session_start(); // Démarre la session pour vérifier si l'utilisateur est connecté
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,24 +14,16 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
 
     <title>Training Studio - Free CSS Template</title>
-<!--
 
-TemplateMo 548 Training Studio
-
-https://templatemo.com/tm-548-training-studio
-
--->
     <!-- Additional CSS Files -->
     <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
-
     <link rel="stylesheet" type="text/css" href="../assets/css/font-awesome.css">
-
     <link rel="stylesheet" href="../assets/css/templatemo-training-studio.css">
 
-    </head>
-    
-    <body>
-    
+  </head>
+  
+  <body>
+  
     <!-- ***** Preloader Start ***** -->
     <div id="js-preloader" class="js-preloader">
       <div class="preloader-inner">
@@ -41,21 +37,16 @@ https://templatemo.com/tm-548-training-studio
     </div>
     <!-- ***** Preloader End ***** -->
     
-    
     <!-- ***** Header Area Start ***** -->
     <header class="header-area header-sticky">
         <div class="container">
             <div class="row">
                 <div class="col-12">
                     <nav class="main-nav">
-                        <!-- ***** Logo Start ***** -->
-                        <a href="index.html" class="logo">
+                        <a href="index.php" class="logo">
                             <img src="../assets/images/logo.png" alt="Logo" style="vertical-align: middle; height: 40px;">
                             Startup<em> Academy</em>
-                          </a>
-                          
-                        <!-- ***** Logo End ***** -->
-                        <!-- ***** Menu Start ***** -->
+                        </a>
                         <ul class="nav">
                             <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
                             <li class="scroll-to-section"><a href="#features">About</a></li>
@@ -74,15 +65,17 @@ https://templatemo.com/tm-548-training-studio
                                   <li><a href="test.html">test</a></li>
                                   <li><a href="quiz.html">quiz</a></li>
                               </ul>
-                          </li>
-
+                            </li>
                             <li class="scroll-to-section"><a href="#contact-us">Contact</a></li> 
-                            <li class="main-button"><a href="#">Sign Up</a></li>
+                            <?php if (isset($_SESSION['iduser'])): ?>
+                                <li class="main-button"><a href="logout.php">Logout</a></li>
+                            <?php else: ?>
+                                <li class="main-button"><a href="login.php">Login</a></li>
+                            <?php endif; ?>
                         </ul>        
                         <a class='menu-trigger'>
                             <span>Menu</span>
                         </a>
-                        <!-- ***** Menu End ***** -->
                     </nav>
                 </div>
             </div>
@@ -98,11 +91,9 @@ https://templatemo.com/tm-548-training-studio
 
          <div class="video-overlay header-text">
             <div class="caption">
-                <!--<h6>work harder, get stronger</h6>-->
                 <h2>
                     Learn at Your Own Pace, <em>Master New Skills</em>
                 </h2>
-                
                 <div class="main-button scroll-to-section">
                     <a href="#features">Become a member</a>
                 </div>
@@ -117,15 +108,14 @@ https://templatemo.com/tm-548-training-studio
             <div class="row">
                 <div class="col-lg-6 offset-lg-3">
                     <div class="section-heading">
-                        <h2>About <em>  Us</em></h2>
+                        <h2>About <em> Us</em></h2>
                         <img src="../assets/images/line-dec.png" alt="waves">
-                       <!-- <p>Training Studio is free CSS template for gyms and fitness centers. You are allowed to use this layout for your business website.</p>-->
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="left-image">
                         <img src="../assets/images/image.png" alt="">
-                      </div>
+                    </div>
                 </div>
                 <div class="col-lg-6 align-self-center">
                     <div class="content-section">
@@ -135,9 +125,7 @@ https://templatemo.com/tm-548-training-studio
                             Our platform seamlessly combines online learning with recruitment opportunities. As an educational hub, it offers a range of features such as video courses, quizzes, and forums to enhance the learning experience. At the same time, it provides companies with the ability to post job listings and content to attract entrepreneurs and talent. With personalized profiles, secure payment options, and AI-driven recommendations, our platform delivers a comprehensive experience for learning, networking, and discovering professional opportunities.
                         </p>
                     </div>
-                
-               
-            </div>
+                </div>
             </div>
         </div>
     </section>
@@ -160,8 +148,7 @@ https://templatemo.com/tm-548-training-studio
         </div>
     </section>
     <!-- ***** Call to Action End ***** -->
-   
-    
+
     <!-- ***** Contact Us Area Starts ***** -->
     <section class="section" id="contact-us">
         <div class="container-fluid">
@@ -215,11 +202,7 @@ https://templatemo.com/tm-548-training-studio
             <div class="row">
                 <div class="col-lg-12">
                     <p>Copyright &copy; 2020 Training Studio
-                    
                     - Designed by <a rel="nofollow" href="https://templatemo.com" class="tm-text-link" target="_parent">TemplateMo</a></p>
-                    
-                    <!-- You shall support us a little via PayPal to info@templatemo.com -->
-                    
                 </div>
             </div>
         </div>
@@ -227,7 +210,6 @@ https://templatemo.com/tm-548-training-studio
 
     <!-- jQuery -->
     <script src="../assets/js/jquery-2.1.0.min.js"></script>
-
     <!-- Bootstrap -->
     <script src="../assets/js/popper.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>

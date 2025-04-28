@@ -119,6 +119,28 @@ public function getTestById($idTest) {
         echo "Erreur : " . $e->getMessage();
     }
 }
+public function traiterQuiz($iduser, $idTest) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $scoreTest = 0;
+
+        // Récupérer les bonnes réponses du quiz
+        $sql = "SELECT reponse_correcteT1, reponse_correcteT2, reponse_correcteT3 FROM tests WHERE idTest = :idTest";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':idTest', $idQuiz, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$result) return "Test non trouvé.";
+
+        if (isset($_POST['repQ1']) && $_POST['repQ1'] == $result['reponse_correcteT1']) $scoreTest++;
+        if (isset($_POST['repQ2']) && $_POST['repQ2'] == $result['rep_correcteT2']) $scoreTest++;
+        if (isset($_POST['repQ3']) && $_POST['repQ3'] == $result['repon_correcteT3']) $scoreTest++;
+
+        $this->enregistrerScore($iduser, $scoreTest);
+
+        return $scoreTest;
+    }
+}
 public function enregistrerScore($iduser, $resultatQuiz = null, $resultatTest = null) {
     $sql = "INSERT INTO score (iduser, resultatQuiz, resultatTest) VALUES (:iduser, :resultatQuiz, :resultatTest)";
     

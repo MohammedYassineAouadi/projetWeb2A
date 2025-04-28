@@ -2,6 +2,9 @@
 require_once __DIR__ . '/../../../config.php';
 require_once __DIR__ . '/../../../Controller/afficherQuiz.php';
 
+session_start();
+
+$_SESSION['id'] = 2;
 $db = config::getConnexion();
 $quizC = new QuizController($db);
 $listeQuiz = $quizC->afficherQuiz();
@@ -9,74 +12,111 @@ $listeQuiz = $quizC->afficherQuiz();
 $score = isset($_GET['score']) ? intval($_GET['score']) : null;
 ?>
 
-<?php if ($score !== null): ?>
-    <div class="alert alert-success">
-        ✅ Votre score : <strong><?= $score ?>/3</strong>
-    </div>
-<?php endif; ?>
-
-<!-- Affichage des quiz -->
-<?php foreach ($listeQuiz as $quiz): ?>
-    <div class="card m-3 p-3 border">
-        <h4><?= htmlspecialchars($quiz['quiz_name']) ?></h4>
-        <a href="detailsQuiz.php?idQuiz=<?= $quiz['idQuiz'] ?>" class="btn btn-primary">Discover More</a>
-    </div>
-<?php endforeach; ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
-    <title>Training Studio - Free CSS Template</title>
-    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/font-awesome.css">
-    <link rel="stylesheet" href="../assets/css/templatemo-training-studio.css">
+
+    <!-- Lien Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Lien Google Fonts (Raleway) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Raleway', 'Poppins', sans-serif;
+            background-color: #fff3e0; /* Fond très clair */
+            color: #FF5722; /* Violet doux */
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #ffa726; /* Violet foncé */
+            font-weight: 700;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            background: #fff;
+            padding: 25px;
+            box-shadow: 0 6px 15px hsla(38, 87.40%, 49.80%, 0.90);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(230, 200, 65, 0.88);
+        }
+
+        .card h4 {
+            color:hsla(38, 87.40%, 49.80%, 0.90); /* Violet moyen */
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg,rgba(241, 220, 26, 0.94),rgb(245, 150, 9));
+            border: none;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: background 0.4s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg,rgba(241, 220, 26, 0.94),rgb(245, 150, 9));
+        }
+
+        .alert-success {
+            background: linear-gradient(rgba(241, 220, 26, 0.94),rgb(245, 150, 9));
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 20px;
+        }
+    </style>
 </head>
-    
+
 <body>
-    <!-- Formulaire du Quiz -->
-    <section class="section" id="quiz-form">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 offset-lg-3">
-                    <div class="section-heading">
-                        <h2>Quiz <em>interactive</em></h2>
-                        <p>Répondez aux questions et soumettez votre score.</p>
+    <div class="container my-5">
+        <!-- Affichage du score -->
+        <?php if (isset($score)): ?>
+            <div class="alert alert-success">
+                ✅ Bravo ! Votre score : <strong><?= htmlspecialchars($score) ?>/3</strong>
+            </div>
+        <?php endif; ?>
+
+        <!-- Titre -->
+        <div class="section-title">
+            <h2>Découvrez nos Quiz</h2>
+        </div>
+
+        <!-- Cartes Quiz -->
+        <div class="row">
+            <?php foreach ($listeQuiz as $quiz): ?>
+                <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                    <div class="card m-3 p-3 w-100">
+                        <h4><?= htmlspecialchars($quiz['quiz_name']) ?></h4>
+                        <a href="detailsQuiz.php?idQuiz=<?= $quiz['idQuiz'] ?>" class="btn btn-primary mt-auto">Découvrez Plus</a>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <form method="POST" action="QuizController.php?action=submitQuiz">
-                        <!-- Question 1 -->
-                        <label for="questionQ1">Question 1:</label><br>
-                        <input type="radio" name="reponseQ1" value="option1"> Option 1<br>
-                        <input type="radio" name="reponseQ1" value="option2"> Option 2<br>
-                        <input type="radio" name="reponseQ1" value="option3"> Option 3<br>
-
-                        <!-- Question 2 -->
-                        <label for="questionQ2">Question 2:</label><br>
-                        <input type="radio" name="reponseQ2" value="option1"> Option 1<br>
-                        <input type="radio" name="reponseQ2" value="option2"> Option 2<br>
-                        <input type="radio" name="reponseQ2" value="option3"> Option 3<br>
-
-                        <!-- Question 3 -->
-                        <label for="questionQ3">Question 3:</label><br>
-                        <input type="radio" name="reponseQ3" value="option1"> Option 1<br>
-                        <input type="radio" name="reponseQ3" value="option2"> Option 2<br>
-                        <input type="radio" name="reponseQ3" value="option3"> Option 3<br>
-
-                        <button type="submit" class="btn btn-primary mt-3">Soumettre</button>
-                    </form>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
-    </section>
-
-    <!-- Include footer and other HTML as needed -->
-
+    </div>
 </body>
+
 </html>

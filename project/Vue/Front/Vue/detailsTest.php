@@ -1,15 +1,16 @@
 <?php
 require_once __DIR__ . '/../../../config.php';
+session_start(); // Ajout de session_start() pour accéder à $_SESSION
 
 if (!isset($_GET['idTest'])) {
     die('ID du test manquant.');
 }
 
-$id = $_GET['idTest'];
+$idTest = $_GET['idTest']; // Renommé $id en $idTest pour plus de clarté
 $db = config::getConnexion();
 
 $stmt = $db->prepare("SELECT * FROM tests WHERE idTest = ?");
-$stmt->execute([$id]);
+$stmt->execute([$idTest]);
 $test = $stmt->fetch();
 
 if (!$test) {
@@ -21,6 +22,7 @@ function nettoyer($str) {
 }
 
 $score = null;
+$message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $score = 0;
@@ -32,84 +34,178 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($rep1 === nettoyer($test['reponse_correcteT1'])) $score++;
     if ($rep2 === nettoyer($test['rep_correcteT2'])) $score++;
     if ($rep3 === nettoyer($test['repon_correcteT3'])) $score++;
+    
+    // Enregistrer le score dans la table score
+    if (isset($_SESSION['id'])) {
+        $iduser = $_SESSION['id']; // ID de l'utilisateur connecté
+        
+        // Vérifier si l'utilisateur a déjà un enregistrement pour ce test
+        $checkScore = $db->prepare("SELECT * FROM score WHERE iduser = ? AND idTest = ?");
+        $checkScore->execute([$iduser, $idTest]);
+        
+        if ($checkScore->rowCount() > 0) {
+            // Si un enregistrement existe, mettre à jour le score du test
+            $updateScore = $db->prepare("UPDATE score SET resultatTest = ? WHERE iduser = ? AND idTest = ?");
+            $updateScore->execute([$score, $iduser, $idTest]);
+            $message = "✅ Score mis à jour dans votre profil.";
+        } else {
+            // Sinon, créer un nouvel enregistrement avec toutes les informations
+            $insertScore = $db->prepare("INSERT INTO score (iduser, idTest, resultatTest) VALUES (?, ?, ?)");
+            $insertScore->execute([$iduser, $idTest, $score]);
+            $message = "✅ Score enregistré dans votre profil.";
+        }
+    } else {
+        $message = "⚠️ Utilisateur non connecté. Votre score ne sera pas enregistré.";
+    }
 }
 ?>
-
-<!-- Affichage du score -->
-<?php if ($score !== null): ?>
-    <div class="alert alert-success">
-        ✅ Votre score : <strong><?= $score ?>/3</strong>
-    </div>
-
-    <?php if ($score >= 2): ?>
-        <div class="alert alert-info mt-2">
-            ✅ Score suffisant ! <a href="Quiz.php" class="btn btn-primary">Accéder au Quiz</a>
-        </div>
-    <?php else: ?>
-        <div class="alert alert-danger">
-            ❌ Vous devez avoir au moins 2/3 pour accéder au quiz.
-        </div>
-    <?php endif; ?>
-<?php endif; ?>
-
-
-
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($test['test_name']) ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; font-family: Arial, sans-serif; }
+        body {
+            background-color: #fff3e0; /* Beige/orangé clair */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         .test-container {
             background-color: white;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            margin-top: 50px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        h2 { color: #007bff; }
-        .question { margin-bottom: 20px; }
-        .btn { width: 100%; margin-top: 20px; }
-        .alert { text-align: center; font-size: 1.3em; }
+
+        h2 {
+            color: #FF5722;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-primary {
+            background-color: #FF5722;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #e64a19;
+        }
+
+        .btn-secondary {
+            background-color: #ffa726;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #fb8c00;
+        }
+
+        .alert-success {
+            background-color: #ffe0b2;
+            color: #e65100;
+            border: 1px solid #ff9800;
+        }
+
+        .alert-danger {
+            background-color: #ffcdd2;
+            color: #c62828;
+            border: 1px solid #e53935;
+        }
+
+        .alert-info {
+            background-color: #ffe0b2;
+            color: #e65100;
+            border: 1px solid #ff9800;
+        }
+
+        a {
+            color: #FF5722;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+
 <div class="container">
     <div class="test-container">
-        <h2 class="text-center"><?= htmlspecialchars($test['test_name']) ?></h2>
+        <h2><?= htmlspecialchars($test['test_name']) ?></h2>
+
+        <?php if (!empty($message)): ?>
+            <div class="alert alert-info"><?= $message ?></div>
+        <?php endif; ?>
 
         <?php if ($score !== null): ?>
             <div class="alert alert-success">✅ Votre score : <strong><?= $score ?>/3</strong></div>
+            
+            <?php if ($score >= 2): ?>
+                <div class="alert alert-info mt-2">
+                    ✅ Score suffisant ! <a href="Quiz.php" class="btn btn-secondary">Accéder au Quiz</a>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-danger">
+                    ❌ Vous devez avoir au moins 2/3 pour accéder au quiz.
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
 
         <form method="POST">
             <!-- Question 1 -->
             <div class="question">
-                <h4><?= htmlspecialchars($test['questionT1']) ?></h4>
+                <h5><?= htmlspecialchars($test['questionT1']) ?></h5>
                 <input type="text" name="reponseT1" class="form-control" required>
             </div>
 
             <!-- Question 2 -->
             <div class="question">
-                <h4><?= htmlspecialchars($test['questionT2']) ?></h4>
+                <h5><?= htmlspecialchars($test['questionT2']) ?></h5>
                 <input type="text" name="reponseT2" class="form-control" required>
             </div>
 
             <!-- Question 3 -->
             <div class="question">
-                <h4><?= htmlspecialchars($test['questionT3']) ?></h4>
+                <h5><?= htmlspecialchars($test['questionT3']) ?></h5>
                 <input type="text" name="reponseT3" class="form-control" required>
             </div>
 
             <button type="submit" class="btn btn-primary">✅ Valider mes réponses</button>
         </form>
 
-        <div class="mt-3 text-center">
+        <div class="text-center">
             <a href="Test.php">← Retour aux tests</a>
         </div>
     </div>
 </div>
+
+<script src="../assets/js/jquery-2.1.0.min.js"></script>
+<script src="../assets/js/bootstrap.min.js"></script>
+
 </body>
 </html>

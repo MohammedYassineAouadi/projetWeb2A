@@ -27,7 +27,10 @@ if (
         'opt1' => $_POST['opt1'],
         'opt2' => $_POST['opt2'],
         'opt3' => $_POST['opt3'],
-        'correct_opt3' => $_POST['correct_opt3']
+        'correct_opt3' => $_POST['correct_opt3'],
+        'idTest' => $_POST['idTest']
+
+
     ];
 
     $quizC = new QuizC();

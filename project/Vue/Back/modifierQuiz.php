@@ -471,7 +471,12 @@ if (!$quizData) {
             <input class="form-control" name="id_video" value="<?= $quizData['id_video']; ?>" type="number" required>
         </div>
     </div>
-
+	<div class="form-group row">
+        <label class="col-sm-12 col-md-2 col-form-label">ID Test</label>
+        <div class="col-sm-12 col-md-10">
+            <input class="form-control" name="idTest" value="<?= $quizData['idTest']; ?>" type="number" required>
+        </div>
+    </div>
     <!-- Bouton de soumission -->
     <div class="form-group row">
         <div class="col-sm-12 col-md-10 offset-md-2">

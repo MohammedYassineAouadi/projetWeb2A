@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $test = new Test(
         $test_name, $questionT1, $reponseT1, $reponse_correcteT1,
         $questionT2, $repT2, $rep_correcteT2,
-        $questionT3, $reponT3, $repon_correcteT3
+        $questionT3, $reponT3, $repon_correcteT3,$idTest
     );
 
     // Instancier le contrôleur et ajouter le test
