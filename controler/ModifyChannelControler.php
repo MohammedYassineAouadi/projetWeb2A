@@ -40,10 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     if ($channel->updateChannel()) {
-        header("Location: ../view/channels.html?success=1");
+        header("Location: ../view/ChannelBackOffice.html");
         exit;
     } else {
-        header("Location: ../view/channels.html?error=1");
+        header("Location: ../view/ChannelBackOffice.html");
         exit;
     }
 }

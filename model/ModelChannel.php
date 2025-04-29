@@ -23,51 +23,63 @@ class Channel
         $this->created_at = $created_at;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 
-    public function getImageUrl() {
+    public function getImageUrl()
+    {
         return $this->image_url;
     }
 
-    public function setImageUrl($image_url) {
+    public function setImageUrl($image_url)
+    {
         $this->image_url = $image_url;
     }
 
-    public function getCreatedBy() {
+    public function getCreatedBy()
+    {
         return $this->created_by;
     }
 
-    public function setCreatedBy($created_by) {
+    public function setCreatedBy($created_by)
+    {
         $this->created_by = $created_by;
     }
 
-    public function getCreatedAt() {
+    public function getCreatedAt()
+    {
         return $this->created_at;
     }
 
-    public function setCreatedAt($created_at) {
+    public function setCreatedAt($created_at)
+    {
         $this->created_at = $created_at;
     }
 
@@ -77,30 +89,23 @@ class Channel
             $db = config::getConnexion();
             $query = $db->query("SELECT * FROM channel");
 
-
+            $channels = [];
             if ($query->rowCount() > 0) {
-                $channels = [];
                 while ($row = $query->fetch()) {
                     // Collect channel data
                     $channels[] = [
                         'id' => $row['id'],
                         'name' => $row['name'],
                         'description' => $row['description'],
-                        'image_url' => $row['image_url'] // Ensure image_url is returned
+                        'image_url' => $row['image_url']
                     ];
                 }
-
-                echo json_encode($channels);
-            } else {
-                echo json_encode(["message" => "No channels found."]);
             }
-
+            return $channels;
         } catch (PDOException $e) {
-            echo json_encode(["error" => $e->getMessage()]);
+            return ["error" => $e->getMessage()];
         }
     }
-
-
 
 
     public function ajoutChannel()
@@ -109,7 +114,7 @@ class Channel
 
         // SQL query to insert a new channel
         $sql = "INSERT INTO channel (name, description, image_url, created_by, created_at) 
-                VALUES (:name, :description, :image_url, :created_by, NOW())";
+            VALUES (:name, :description, :image_url, :created_by, NOW())";
 
         $stmt = $db->prepare($sql);
 
@@ -119,13 +124,13 @@ class Channel
         $stmt->bindParam(':created_by', $this->created_by, PDO::PARAM_INT);
 
         try {
-
             $stmt->execute();
-            echo "Channel added successfully!";
+            return true; // Return success status
         } catch (PDOException $e) {
-            echo "Error: " . $e->getMessage();
+            throw new Exception("Error: " . $e->getMessage());
         }
     }
+
 
 
     public function validateChannelData()
@@ -137,19 +142,20 @@ class Channel
 
         // Check if the name is too long (e.g., 100 characters max)
         if (strlen($this->name) > 100) {
-            throw new Exception('Name is too long. Maximum length is 100 characters.');
+            throw new Exception('nom trop long.');
         }
 
         // Check if the description is too long (e.g., 255 characters max)
         if (strlen($this->description) > 255) {
-            throw new Exception('Description is too long. Maximum length is 255 characters.');
+            throw new Exception('Description trop longus.');
         }
 
         // Optionally: Validate the image URL format (can be improved based on your requirements)
         if (!filter_var($this->image_url, FILTER_VALIDATE_URL)) {
-            throw new Exception('Invalid image URL format.');
+            throw new Exception('url invalid.');
         }
     }
+
     public function updateChannel()
     {
         $db = config::getConnexion();
@@ -171,9 +177,9 @@ class Channel
             $stmt->bindParam(':created_by', $this->created_by);
 
             $stmt->execute();
-            echo "Channel updated successfully!";
+            //echo "Channel updated successfully!";
         } catch (PDOException $e) {
-            echo "Error updating channel: " . $e->getMessage();
+            //echo "Error updating channel: " . $e->getMessage();
         }
     }
 
@@ -181,22 +187,53 @@ class Channel
     {
         try {
             $db = Config::getConnexion();
+
+            // Make sure we're working with an integer
+            $id = (int)$id;
+
+            // Begin transaction to ensure clean operation
+            $db->beginTransaction();
+
             $sql = "DELETE FROM channel WHERE id = :id";
             $stmt = $db->prepare($sql);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
-            echo "Channel with ID $id deleted successfully.";
+            // Check if any rows were affected
+            $rowsAffected = $stmt->rowCount();
+
+            // Commit the transaction
+            $db->commit();
+
+            if($rowsAffected > 0) {
+                return true; // Deletion successful
+            } else {
+                return false; // No rows were deleted
+            }
         } catch (PDOException $e) {
-            echo "Error deleting channel: " . $e->getMessage();
+            // Rollback in case of error
+            if($db->inTransaction()) {
+                $db->rollBack();
+            }
+
+            // Log the error (but don't expose it to users in production)
+            error_log("Error deleting channel: " . $e->getMessage());
+            return false;
         }
     }
-
-
 
 
     public function sanitizeOutput($data)
     {
         return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     }
+
+    public static function getChannelById($id)
+    {
+        $db = Config::getConnexion();
+        $stmt = $db->prepare("SELECT * FROM channel WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
 }

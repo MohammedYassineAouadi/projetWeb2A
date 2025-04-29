@@ -8,24 +8,18 @@
 </head>
 
 <body>
-
-
 <header class="header-area header-sticky">
     <a href="creation_channels.html" class="create-channel-button" title="Create Channel">
         <img src="img/plus.png" alt="Create Channel">
     </a>
 
     <div class="container">
-
-
         <div class="row">
             <div class="col-12">
                 <nav class="main-nav">
-
                     <a href="index.html" class="logo">
                         <img src="img/logo.png" alt="Logo" style="vertical-align: middle; height: 40px;"> Startup<em> Academy</em>
                     </a>
-
 
                     <ul class="nav">
                         <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
@@ -48,43 +42,49 @@
                         <li class="scroll-to-section"><a href="#contact-us">Contact</a></li>
                     </ul>
                     <a class='menu-trigger'><span>Menu</span></a>
-                    <!-- ***** Menu End ***** -->
                 </nav>
             </div>
         </div>
     </div>
 </header>
-<!-- ***** Header Area End ***** -->
 
 <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar" id="channelSidebar">
-
+        <!-- Channels will be loaded here by JavaScript -->
     </div>
 
     <!-- Chat Window -->
     <div class="chat-window">
         <div class="chat-header"><h4 id="channelTitle"># general</h4></div>
+
         <div class="chat-messages" id="chat-messages">
             <!-- Messages will be appended here -->
         </div>
-        <div class="chat-input">
-            <input type="text" placeholder="Message #general" id="messageInput"/>
-            <button onclick="sendMessage()">Send</button>
+        <div class="chat-input" >
+            <input type="text" placeholder="Message #general" id="messageInput" />
+            <button id="sendMessageButton" onclick="sendMessage()">Send</button>
         </div>
     </div>
 </div>
-<a href="modifier_channels.html" class="btn btn-danger">
-    <i class="fa fa-trash"></i> modifier un Channel
-</a>
 
-<a href="supprimer_channels.html" class="btn btn-danger">
-    <i class="fa fa-trash"></i> Supprimer un Channel
-</a>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="modifier_channels.html" class="btn btn-primary mx-2">
+                <i class="fa fa-edit"></i> Modifier un Channel
+            </a>
+            <a href="ChannelBackOffice.html" class="btn btn-danger mx-2">
+                <i class="fa fa-trash"></i> Back
+            </a>
+        </div>
+    </div>
+</div>
 
 <!-- Scripts -->
 <script src="js/jquery-2.1.0.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/channels.js"></script>
+<script src="js/messages.js"></script>
 </body>
 </html>

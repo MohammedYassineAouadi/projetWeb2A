@@ -367,3 +367,97 @@ html {
     height: auto;
     display: inline-block;
 }
+
+/* Active channel styling */
+.channel-icon.active img {
+    border: 2px solid #7289da;
+    box-shadow: 0 0 5px #7289da;
+}
+
+/* Message Styling */
+.chat-messages {
+    height: calc(100% - 110px);
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    max-width: 80%;
+    align-self: flex-start;
+    word-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.8em;
+}
+
+.username {
+    font-weight: bold;
+    color: #7289da;
+}
+
+.timestamp {
+    color: #999;
+}
+
+.message-content {
+    color: #333;
+    line-height: 1.4;
+}
+
+/* Current user's messages appear on the right */
+.message[data-user="current"] {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+}
+
+/* Chat input styling */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #fff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.chat-input input:focus {
+    border-color: #7289da;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    background-color: #7289da;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.chat-input button:hover {
+    background-color: #5b73c7;
+}
+
+
+/*new*/

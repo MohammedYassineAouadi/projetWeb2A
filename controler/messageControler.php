@@ -1,0 +1,124 @@
+<?php
+require_once '../model/message.php';
+
+class MessageController
+{
+    // Add a new message
+    public function createMessage($channel_id, $user_id, $content)
+    {
+        try {
+            $message = new Message(null, $channel_id, $user_id, $content);
+            $id = $message->ajoutMessage();
+            return [
+                'success' => true,
+                'message' => 'Message created successfully.',
+                'id' => $id
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error creating message: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    // Get all messages for a channel
+    public function getMessagesByChannel($channel_id)
+    {
+        try {
+            $messages = Message::afficherMessagesParChannel($channel_id);
+            return [
+                'success' => true,
+                'messages' => $messages
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error fetching messages: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    // Delete a message
+    public function deleteMessage($id)
+    {
+        try {
+            $result = Message::supprimerMessage($id);
+            if ($result) {
+                return [
+                    'success' => true,
+                    'message' => 'Message deleted successfully.'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Message not found or already deleted.'
+                ];
+            }
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error deleting message: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    // Get a single message by ID
+    public function getMessageById($id)
+    {
+        try {
+            $message = Message::getMessageById($id);
+            if ($message) {
+                return [
+                    'success' => true,
+                    'message_data' => [
+                        'id' => $message->getId(),
+                        'channel_id' => $message->getChannelId(),
+                        'user_id' => $message->getUserId(),
+                        'content' => $message->getContent(),
+                        'sent_at' => $message->getSentAt()
+                    ]
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Message not found.'
+                ];
+            }
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error fetching message: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
+// Update a message
+    public function updateMessage($id, $newContent)
+    {
+        try {
+            $result = Message::modifierMessage($id, $newContent);
+            if ($result) {
+                return [
+                    'success' => true,
+                    'message' => 'Message updated successfully.'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Message not found or update failed.'
+                ];
+            }
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error updating message: ' . $e->getMessage()
+            ];
+        }
+    }
+}
+?>
+
+
+

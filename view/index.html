@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,5 +12,51 @@
 <p>Click below to go to the Channels page:</p>
 <a href="channels.html">Go to Channels</a>
 
+<a href="ChannelBackOffice.html" class="btn btn-danger">
+    <i class="fa fa-trash"></i> back
+</a>
+
+<h2>Add Message</h2>
+<!-- Form to add a message - ensure consistent path -->
+<form method="POST" action="../controler/messageControler.php">
+    <input type="hidden" name="action" value="add">
+
+    <label for="user_id">User ID:</label>
+    <input type="number" name="user_id" id="user_id" value="1" required><br>
+
+    <label for="channel_id">Channel ID:</label>
+    <input type="number" name="channel_id" id="channel_id" value="3" required><br>
+
+    <label for="content">Message Content:</label>
+    <textarea name="content" id="content" required></textarea><br>
+
+    <button type="submit" name="submit_message">Send Message</button>
+</form>
+
+<h2>Delete Message</h2>
+<!-- Form to delete a message - ensure consistent path -->
+<form method="POST" action="../controler/messageControler.php">
+    <input type="hidden" name="action" value="delete">
+    <label for="message_id">Message ID to delete:</label>
+    <input type="number" name="message_id" id="message_id" required><br>
+    <button type="submit">Delete Message</button>
+</form>
+
+<h2>All Messages in Channel</h2>
+<!-- Displaying all messages -->
+<h3>Messages in Channel 3</h3>
+<ul>
+    <?php foreach ($messages as $message): ?>
+    <li>
+        <strong>Message ID:</strong> <?= $message['message_id'] ?> <br>
+        <strong>Content:</strong> <?= $message['content'] ?> <br>
+        <strong>Posted by User:</strong> <?= $message['user_id'] ?> <br>
+        <strong>Timestamp:</strong> <?= $message['timestamp'] ?> <br>
+        <hr>
+    </li>
+    <?php endforeach; ?>
+</ul>
 </body>
+
+<script src="js/channels.js"></script>
 </html>
