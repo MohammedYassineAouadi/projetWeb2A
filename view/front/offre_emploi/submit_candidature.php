@@ -3,7 +3,8 @@ require_once __DIR__ . '/../../../controller/candidature_con.php';
 require_once __DIR__ . '/../../../model/candidature.php';
 
 session_start();
-$user_id = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 1;
+// $user_id = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 1;
+$user_id = isset($_SESSION['user']['id']) ? intval($_SESSION['user']['id']) : 1;
 
 if (
     isset($_POST['offre_id']) && intval($_POST['offre_id']) > 0 &&

@@ -3,7 +3,7 @@
 
 <head>
     <?php
-    
+
     $user_id = 1;
     require_once __DIR__ . '/../../../controller/offre_emploi_con.php';
     require_once __DIR__ . '/../../../controller/candidature_con.php';
@@ -12,11 +12,11 @@
     $controller = new OffreEmploiCon();
     $offres = $controller->getAll();
 
-    
 
 
-    
-    
+
+
+
     ?>
 
     <meta charset="utf-8">
@@ -159,7 +159,8 @@ https://templatemo.com/tm-548-training-studio
                                 <a href="#" style="color: rgba(0,123,255,.25);">About</a>
                             </li>
                             <li class="scroll-to-section">
-                                <a href="offre_emploi.php" class="active" style="color: rgba(0,123,255,.25);">Offres d'Emploi</a>
+                                <a href="offre_emploi.php" class="active" style="color: rgba(0,123,255,.25);">Offres
+                                    d'Emploi</a>
                             </li>
                             <li class="scroll-to-section">
                                 <a href="schedules.html" style="color: rgba(0,123,255,.25);">Schedules</a>
@@ -236,20 +237,22 @@ https://templatemo.com/tm-548-training-studio
                                     <div class="offre-detail"><strong>Salaire:</strong>
                                         <?= htmlspecialchars($offre['salaire']) ?> TND</div>
                                     <div class="offre-detail">
-    <?php if (!$candidature): ?>
-        <button type="button" class="btn btn-primary" style="background:#ed563b;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;" onclick="openMotivationModal(<?= htmlspecialchars($offre['id']) ?>, '<?= htmlspecialchars(addslashes($offre['titre'])) ?>')">Postuler</button>
-    <?php else: ?>
+                                        <?php if (!$candidature): ?>
+                                            <button type="button" class="btn btn-primary"
+                                                style="background:#ed563b;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;"
+                                                onclick="openMotivationModal(<?= htmlspecialchars($offre['id']) ?>, '<?= htmlspecialchars(addslashes($offre['titre'])) ?>')">Postuler</button>
+                                        <?php else: ?>
                                             <?php
-                                            $statut = strtolower($candidature['statut']);
+                                            // $statut = strtolower($candidature['statut']);
                                             $badgeColor = '#888';
-                                            if ($statut === 'acceptee')
-                                                $badgeColor = '#43a047'; // green
-                                            elseif ($statut === 'refusee')
-                                                $badgeColor = '#e53935'; // red
+                                            // if ($statut === 'acceptee')
+                                            //     $badgeColor = '#43a047'; // green
+                                            // elseif ($statut === 'refusee')
+                                            //     $badgeColor = '#e53935'; // red
                                             ?>
                                             <span class="badge"
                                                 style="background:<?= $badgeColor ?>;color:#fff;padding:7px 16px;border-radius:6px;font-weight:600;">
-                                                <?= htmlspecialchars(ucfirst($candidature['statut'])) ?>
+                                                <?= /* htmlspecialchars(ucfirst($candidature['statut'])) */ 'Postuler'  ?>
                                             </span>
                                         <?php endif; ?>
                                     </div>
@@ -352,38 +355,44 @@ https://templatemo.com/tm-548-training-studio
     <script src="../../../assets/front/js/custom.js"></script>
     <script src="lettre_motivation_validator.js"></script>
 
-<!-- Motivation Letter Modal -->
-<div id="motivationModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;overflow:auto;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
-  <div style="background:#fff;margin:60px auto;padding:32px 28px;max-width:400px;width:95vw;border-radius:12px;position:relative;box-shadow:0 2px 24px rgba(0,0,0,0.18);">
-    <span onclick="closeMotivationModal()" style="position:absolute;top:14px;right:18px;font-size:1.7em;cursor:pointer;color:#ed563b;">&times;</span>
-    <h4 id="modalOfferTitle" style="margin-bottom:18px;color:#ed563b;font-weight:700;"></h4>
-    <form method="post" action="submit_candidature.php">
-      <input type="hidden" name="offre_id" id="modalOffreId" value="">
-      <div style="margin-bottom:18px;">
-        <label for="lettre_motivation" style="font-weight:600;">Lettre de motivation :</label><br>
-        <textarea name="lettre_motivation" id="modalLettreMotivation" rows="5" style="width:100%;border-radius:6px;border:1px solid #ccc;padding:10px;resize:vertical;"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary" onclick="return validateLettreMotivationModal()" style="background:#ed563b;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;">Envoyer ma candidature</button>
-    </form>
-  </div>
-</div>
-<script>
-function openMotivationModal(offreId, offreTitle) {
-  document.getElementById('modalOffreId').value = offreId;
-  document.getElementById('modalOfferTitle').innerText = 'Postuler à : ' + offreTitle;
-  document.getElementById('modalLettreMotivation').value = '';
-  document.getElementById('motivationModal').style.display = 'flex';
-}
-function closeMotivationModal() {
-  document.getElementById('motivationModal').style.display = 'none';
-}
-window.onclick = function(event) {
-  var modal = document.getElementById('motivationModal');
-  if (event.target == modal) {
-    closeMotivationModal();
-  }
-}
-</script>
+    <!-- Motivation Letter Modal -->
+    <div id="motivationModal" class="modal"
+        style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;overflow:auto;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
+        <div
+            style="background:#fff;margin:60px auto;padding:32px 28px;max-width:400px;width:95vw;border-radius:12px;position:relative;box-shadow:0 2px 24px rgba(0,0,0,0.18);">
+            <span onclick="closeMotivationModal()"
+                style="position:absolute;top:14px;right:18px;font-size:1.7em;cursor:pointer;color:#ed563b;">&times;</span>
+            <h4 id="modalOfferTitle" style="margin-bottom:18px;color:#ed563b;font-weight:700;"></h4>
+            <form method="post" action="submit_candidature.php">
+                <input type="hidden" name="offre_id" id="modalOffreId" value="">
+                <div style="margin-bottom:18px;">
+                    <label for="lettre_motivation" style="font-weight:600;">Lettre de motivation :</label><br>
+                    <textarea name="lettre_motivation" id="modalLettreMotivation" rows="5"
+                        style="width:100%;border-radius:6px;border:1px solid #ccc;padding:10px;resize:vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="return validateLettreMotivationModal()"
+                    style="background:#ed563b;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;">Envoyer
+                    ma candidature</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function openMotivationModal(offreId, offreTitle) {
+            document.getElementById('modalOffreId').value = offreId;
+            document.getElementById('modalOfferTitle').innerText = 'Postuler à : ' + offreTitle;
+            document.getElementById('modalLettreMotivation').value = '';
+            document.getElementById('motivationModal').style.display = 'flex';
+        }
+        function closeMotivationModal() {
+            document.getElementById('motivationModal').style.display = 'none';
+        }
+        window.onclick = function (event) {
+            var modal = document.getElementById('motivationModal');
+            if (event.target == modal) {
+                closeMotivationModal();
+            }
+        }
+    </script>
 </body>
 
 </html>
