@@ -20,7 +20,7 @@ class Message
         $this->sent_at = $sent_at;
     }
 
-    // Getters and Setters
+
     public function getId() { return $this->id; }
     public function setId($id) { $this->id = $id; }
 
@@ -36,7 +36,7 @@ class Message
     public function getSentAt() { return $this->sent_at; }
     public function setSentAt($sent_at) { $this->sent_at = $sent_at; }
 
-    // Add new Message
+
     public function ajoutMessage()
     {
         try {
@@ -60,7 +60,6 @@ class Message
         }
     }
 
-    // Show all messages for a channel
     public static function afficherMessagesParChannel($channel_id)
     {
         try {
@@ -85,7 +84,7 @@ class Message
         }
     }
 
-    // Delete a message by ID
+
     public static function supprimerMessage($id)
     {
         try {
@@ -112,7 +111,7 @@ class Message
         }
     }
 
-    // Get a single message by ID
+
     public static function getMessageById($id)
     {
         try {
@@ -136,7 +135,6 @@ class Message
         }
     }
 
-    // Validate message data
     public function validateMessageData()
     {
         if (empty($this->content)) {
@@ -155,12 +153,11 @@ class Message
             throw new Exception('Invalid user ID.');
         }
     }
-    // Modify the content of an existing message by ID
-    // Modify the content of an existing message by ID (static method)
+
     public static function modifierMessage($id, $newContent)
     {
         try {
-            // Validate the new content data
+
             if (empty($newContent)) {
                 throw new Exception('Message content cannot be empty.');
             }
@@ -169,23 +166,23 @@ class Message
                 throw new Exception('Message is too long (500 characters max).');
             }
 
-            // Get database connection
+
             $db = Config::getConnexion();
 
-            // Prepare the SQL query to update the message content
+
             $sql = "UPDATE messages SET content = :content WHERE message_id = :id";
 
-            // Prepare the statement
+
             $stmt = $db->prepare($sql);
 
-            // Bind parameters
+
             $stmt->bindParam(':content', $newContent, PDO::PARAM_STR);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-            // Execute the statement
+
             $stmt->execute();
 
-            // Return success if the update is successful
+
             return $stmt->rowCount() > 0;
 
         } catch (PDOException $e) {

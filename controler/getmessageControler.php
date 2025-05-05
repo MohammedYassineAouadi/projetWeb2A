@@ -2,9 +2,9 @@
 require_once '../model/message.php';
 require_once 'messageControler.php';
 
-header('Content-Type: application/json');
+header('Content-Type: application/json ,charset=utf-8');
 
-// Check if action is set in $_GET
+
 if (!isset($_GET['action'])) {
     echo json_encode([
         'status' => 'error',
@@ -13,7 +13,7 @@ if (!isset($_GET['action'])) {
     exit;
 }
 
-// Create an instance of the controller
+
 $messageController = new MessageController();
 
 // Handle actions from GET parameters

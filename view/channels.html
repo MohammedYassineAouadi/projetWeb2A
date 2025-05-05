@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/font-awesome.css">
     <link rel="stylesheet" href="css/templatemo-training-studio.css">
@@ -49,17 +50,26 @@
 </header>
 
 <div class="main-container">
-    <!-- Sidebar -->
+
     <div class="sidebar" id="channelSidebar">
-        <!-- Channels will be loaded here by JavaScript -->
+
     </div>
 
-    <!-- Chat Window -->
+
     <div class="chat-window">
-        <div class="chat-header"><h4 id="channelTitle"># general</h4></div>
+        <div class="chat-header">
+            <h4 id="channelTitle"># general</h4>
+            <div class="anonymous-toggle-container">
+                <span class="anonymous-label">Anonymous</span>
+                <label class="anonymous-switch">
+                    <input type="checkbox" id="anonymousToggle">
+                    <span class="anonymous-slider"></span>
+                </label>
+            </div>
+        </div>
 
         <div class="chat-messages" id="chat-messages">
-            <!-- Messages will be appended here -->
+
         </div>
         <div class="chat-input" >
             <input type="text" placeholder="Message #general" id="messageInput" />
@@ -81,7 +91,7 @@
     </div>
 </div>
 
-<!-- Scripts -->
+
 <script src="js/jquery-2.1.0.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/channels.js"></script>

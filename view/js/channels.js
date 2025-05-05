@@ -1,37 +1,22 @@
-// === Global State ===
+
 let currentChannel = 'general';
 let currentChannelId = null;
-const currentUserId = 1; // This can be dynamically set later
-let editingMessageId = null; // <-- Track the message being edited
+const currentUserId = 1;
+let editingMessageId = null;
 
-// === Utility Functions ===
-
-/**
- * Escapes HTML to prevent XSS attacks.
- * @param {string} text - The text to escape.
- * @returns {string} - The escaped HTML.
- */
 const escapeHTML = (text) => {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 };
 
-/**
- * Formats a timestamp to HH:MM format.
- * @param {string} timestamp - The timestamp to format.
- * @returns {string} - The formatted time.
- */
+
 const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-// === Channel Management ===
 
-/**
- * Loads channels from the server and populates the sidebar.
- */
 const loadChannels = async () => {
     try {
         const response = await fetch('../controler/getchannels.php');
@@ -49,12 +34,12 @@ const loadChannels = async () => {
             div.classList.add('channel-icon');
             div.dataset.name = channel.name;
             div.dataset.id = channel.id;
-            div.innerHTML = `<img src="${channel.image_url || 'img/default.png'}" alt="${channel.name}">`;
+            div.innerHTML = `<img src="${channel.image_url || 'img/python.png'}" alt="${channel.name}">`;
             div.addEventListener('click', () => switchChannel(channel.name, channel.id));
             sidebar.appendChild(div);
         });
 
-        // Automatically switch to the first channel
+
         switchChannel(channels[0].name, channels[0].id);
     } catch (error) {
         console.error('Error loading channels:', error);
@@ -63,11 +48,7 @@ const loadChannels = async () => {
     }
 };
 
-/**
- * Switches to the selected channel and loads its messages.
- * @param {string} name - The name of the channel.
- * @param {number} channelId - The ID of the channel.
- */
+
 const switchChannel = (name, channelId) => {
     currentChannel = name;
     currentChannelId = channelId;
@@ -100,10 +81,111 @@ const switchChannel = (name, channelId) => {
     fetchMessages();
 };
 
-// === Message Handling ===
+
+
+
+const checkMessageWithSightengine = async (text) => {
+    const apiUser = '356610247';     // Replace with your Sightengine API user
+    const apiSecret = '4nvAD9FiQ2JfbWfQ5bAsH7rSkjd8J3yq'; // Replace with your Sightengine API secret
+
+    const url = `https://api.sightengine.com/1.0/text/check.json?text=${encodeURIComponent(text)}&lang=fr&mode=standard&categories=profanity,spam,violence&api_user=${apiUser}&api_secret=${apiSecret}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Sightengine result:', JSON.stringify(data, null, 2));
+        return data;
+    } catch (error) {
+        console.error('Sightengine moderation error:', error);
+        return null;
+    }
+};
+// Define emoji map globally so it can be accessed by multiple functions
+const emojiMap = {
+    ':smile:': '&#128522;', // 😊
+    ':grin:': '&#128515;', // 😃
+    ':joy:': '&#128514;', // 😂
+    ':rofl:': '&#129315;', // 🤣
+    ':smiley:': '&#128516;', // 😄
+    ':laughing:': '&#128518;', // 😆
+    ':wink:': '&#128521;', // 😉
+    ':blush:': '&#128522;', // 😊
+    ':heart_eyes:': '&#128525;', // 😍
+    ':kissing:': '&#128535;', // 😗
+    ':innocent:': '&#128519;', // 😇
+    ':sunglasses:': '&#128526;', // 😎
+    ':neutral:': '&#128528;', // 😐
+    ':expressionless:': '&#128529;', // 😑
+    ':unamused:': '&#128530;', // 😒
+    ':sweat:': '&#128531;', // 😓
+    ':pensive:': '&#128532;', // 😔
+    ':confused:': '&#128533;', // 😕
+    ':confounded:': '&#128534;', // 😖
+    ':kissing_heart:': '&#128536;', // 😘
+    ':relieved:': '&#128524;', // 😌
+    ':heart:': '&#10084;&#65039;', // ❤️
+    ':thumbsup:': '&#128077;', // 👍
+    ':thumbsdown:': '&#128078;', // 👎
+    ':fire:': '&#128293;', // 🔥
+    ':tada:': '&#127881;', // 🎉
+    ':eyes:': '&#128064;', // 👀
+    ':thinking:': '&#129300;', // 🤔
+    ':100:': '&#128175;', // 💯
+    ':check:': '&#9989;', // ✅
+    ':rocket:': '&#128640;', // 🚀
+    ':star:': '&#11088;', // ⭐
+    ':sparkles:': '&#10024;', // ✨
+    ':ok_hand:': '&#128076;', // 👌
+    ':wave:': '&#128075;', // 👋
+    ':pray:': '&#128591;', // 🙏
+    ':clap:': '&#128079;', // 👏
+    ':muscle:': '&#128170;', // 💪
+    ':trophy:': '&#127942;', // 🏆
+    ':gift:': '&#127873;', // 🎁
+    ':birthday:': '&#127874;', // 🎂
+    ':bulb:': '&#128161;', // 💡
+    ':warning:': '&#9888;&#65039;', // ⚠️
+    ':question:': '&#10067;', // ❓
+    ':exclamation:': '&#10071;', // ❗
+    ':anger:': '&#128162;', // 💢
+    ':zzz:': '&#128164;', // 💤
+    ':dash:': '&#128168;', // 💨
+    ':sweat_drops:': '&#128166;', // 💦
+    ':notes:': '&#127926;', // 🎶
+    ':speak_no_evil:': '&#128584;', // 🙈
+    ':see_no_evil:': '&#128586;', // 🙉
+    ':hear_no_evil:': '&#128585;' // 🙊
+};
 
 /**
- * Fetches messages for the current channel from the server.
+ * Parse emoji shortcodes into HTML entity representations
+ * @param {string} text - The text to parse
+ * @return {string} Text with emoji shortcodes replaced by HTML entity representations
+ */
+const parseEmojis = (text) => {
+    // Replace shortcodes with HTML entity representations of emojis
+    Object.entries(emojiMap).forEach(([code, entity]) => {
+        text = text.replace(new RegExp(escapeRegExp(code), 'g'), entity);
+    });
+
+    return text;
+};
+
+/**
+ * Escape special characters in a string for use in a RegExp
+ * @param {string} string - The string to escape
+ * @return {string} The escaped string
+ */
+const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+/**
+ * Fetch messages from the server and display them
  */
 const fetchMessages = async () => {
     if (!currentChannelId) {
@@ -112,15 +194,13 @@ const fetchMessages = async () => {
     }
 
     try {
-        // Explicitly use window.location to navigate and force a GET request
         const url = `../controler/getmessageControler.php?action=fetchMessages&channel_id=${currentChannelId}`;
 
         console.log('Fetching messages with GET:', url);
 
-        // Make sure we're using GET with no options that might default to POST
         const response = await fetch(url, {
-            method: 'GET',  // Explicitly set the method to GET
-            cache: 'no-cache'  // Don't use cached results
+            method: 'GET',
+            cache: 'no-cache'
         });
 
         const data = await response.json();
@@ -130,34 +210,43 @@ const fetchMessages = async () => {
         chatContainer.innerHTML = '';
 
         if (data.status === 'success' && Array.isArray(data.messages)) {
-            // This is the part of your channels.js that needs to be updated
-// Replace the existing message creation code with this in the fetchMessages function
-
             data.messages.forEach(msg => {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message';
                 messageDiv.dataset.messageId = msg.id;
+
+                // Determine the username: if user_id is 100, show 'Anonymous'
+                const username = msg.user_id === 100 ? 'Anonyme' : `User ${msg.user_id}`;
+
+                // First escape HTML to prevent XSS, then parse emoji shortcodes
+                const messageWithEmojis = parseEmojis(escapeHTML(msg.content));
+
+                // Make URLs clickable
+                const messageWithClickableLinks = messageWithEmojis.replace(
+                    /(https?:\/\/[^\s]+)/g,
+                    '<a href="$1" target="_blank">$1</a>'
+                );
+
                 messageDiv.innerHTML = `
-        <div class="message-header">
-            <span class="username">User ${msg.user_id}</span>
-            <span class="timestamp">${formatTimestamp(msg.sent_at)}</span>
-            <div class="message-actions">
-                <button class="message-menu-button" onclick="toggleMessageMenu(${msg.id})">
-                    <i class="fa fa-ellipsis-v"></i>
-                </button>
-                <div id="message-menu-${msg.id}" class="message-menu">
-                    <ul>
-                        <li><a href="#" onclick="editMessage(${msg.id}); return false;"><i class="fa fa-edit"></i> Edit</a></li>
-                        <li><a href="#" onclick="deleteMessage(${msg.id}); return false;"><i class="fa fa-trash"></i> Delete</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="message-content">${escapeHTML(msg.content)}</div>
-    `;
+                    <div class="message-header">
+                        <span class="username">${username}</span>
+                        <span class="timestamp">${formatTimestamp(msg.sent_at)}</span>
+                        <div class="message-actions">
+                            <button class="message-menu-button" onclick="toggleMessageMenu(${msg.id})">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                            <div id="message-menu-${msg.id}" class="message-menu">
+                                <ul>
+                                    <li><a href="#" onclick="editMessage(${msg.id}); return false;"><i class="fa fa-edit"></i> Edit</a></li>
+                                    <li><a href="#" onclick="deleteMessage(${msg.id}); return false;"><i class="fa fa-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-content">${messageWithClickableLinks}</div>
+                `;
                 chatContainer.appendChild(messageDiv);
             });
-
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
         } else {
@@ -171,17 +260,21 @@ const fetchMessages = async () => {
     }
 };
 
+
+
 /**
- * Sends a new message to the server.
- */
-/**
- * Sends a new message to the server.
+ * Send a message to the server
+ * @param {Event} e - The event object
  */
 const sendMessage = async (e) => {
     if (e) e.preventDefault();
 
     const input = document.getElementById('messageInput');
-    const messageText = input.value.trim();
+    let messageText = input.value.trim();
+
+    // Check if the anonymous toggle is enabled
+    const isAnonymous = document.getElementById('anonymousToggle').checked;
+    const userId = isAnonymous ? 100 : currentUserId; // Set user_id to 0 if anonymous, otherwise use currentUserId
 
     if (!currentChannelId) {
         console.error('Cannot send message: No channel selected.');
@@ -193,7 +286,60 @@ const sendMessage = async (e) => {
         return;
     }
 
-    // If editing, update the message
+    // 1. Sightengine check
+    const moderationResult = await checkMessageWithSightengine(messageText);
+    console.log("Sightengine result:", moderationResult);
+
+    if (
+        !moderationResult ||
+        moderationResult.profanity?.matches?.length > 0 ||
+        moderationResult.insult?.matches?.length > 0 ||
+        moderationResult.toxicity?.matches?.length > 0 ||
+        moderationResult.threat?.matches?.length > 0 ||
+        moderationResult.personal?.matches?.length > 0
+    ) {
+        alert('Message bloqué pour contenu inapproprié.');
+        input.value = '';
+
+        // log blocked message
+        await fetch('../controler/log_message.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'blocked',
+                user_id: userId,
+                channel_id: currentChannelId,
+                content: messageText,
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        return;
+    }
+
+    // 2. VirusTotal URL scan
+    const vtResult = await checkMessageWithVirusTotal(messageText);
+    if (!vtResult.safe) {
+        alert(`Message bloqué : le lien "${vtResult.url}" est signalé comme dangereux.`);
+        input.value = '';
+
+        // log blocked URL message
+        await fetch('../controler/log_message.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'blocked',
+                user_id: userId,
+                channel_id: currentChannelId,
+                content: messageText,
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        return;
+    }
+
+    // 3. Update message if editing
     if (editingMessageId) {
         try {
             const url = `../controler/updateMessageControler.php?id=${editingMessageId}&content=${encodeURIComponent(messageText)}`;
@@ -208,22 +354,22 @@ const sendMessage = async (e) => {
             if (data.success) {
                 input.value = '';
                 input.placeholder = `Message #${currentChannel}`;
-                editingMessageId = null; // Clear editing mode
+                editingMessageId = null;
                 fetchMessages();
             } else {
-                alert('Failed to update message: ' + data.message);
+                alert('Échec de la mise à jour du message : ' + data.message);
             }
         } catch (error) {
-            console.error('Error updating message:', error);
+            console.error('Erreur lors de la mise à jour du message :', error);
         }
         return;
     }
 
-    // If not editing, send a normal new message
+    // 4. Send new message
     try {
-        console.log("Sending message:", messageText, currentChannelId, currentUserId);
+        console.log("Sending message:", messageText, currentChannelId, userId);
 
-        const url = `../controler/sendmessagecontroler.php?action=sendMessage&channel_id=${currentChannelId}&user_id=${currentUserId}&content=${encodeURIComponent(messageText)}`;
+        const url = `../controler/sendmessagecontroler.php?action=sendMessage&channel_id=${currentChannelId}&user_id=${userId}&content=${encodeURIComponent(messageText)}`;
 
         const response = await fetch(url, {
             method: 'GET',
@@ -235,14 +381,281 @@ const sendMessage = async (e) => {
 
         if (data.status === 'success') {
             input.value = '';
+            hideEmojiSuggestions();
             fetchMessages();
+
+            // log successful message
+            await fetch('../controler/log_message.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'sent',
+                    user_id: userId,
+                    channel_id: currentChannelId,
+                    content: messageText,
+                    timestamp: new Date().toISOString()
+                })
+            });
         } else {
-            console.error('Error sending message:', data.message || 'Unknown error');
+            console.error('Erreur lors de l\'envoi :', data.message || 'Erreur inconnue');
         }
     } catch (error) {
-        console.error('Network error while sending message:', error);
+        console.error('Erreur réseau lors de l\'envoi :', error);
     }
 };
+
+
+
+// Variables for emoji autocomplete
+let showingSuggestions = false;
+let emojiSearchText = '';
+let selectedSuggestionIndex = -1;
+
+/**
+ * Initialize emoji autocomplete functionality
+ */
+const initEmojiAutocomplete = () => {
+    const inputElement = document.getElementById('messageInput');
+
+    // Create emoji suggestions container
+    const emojiSuggestionsDiv = document.createElement('div');
+    emojiSuggestionsDiv.id = 'emoji-suggestions';
+    emojiSuggestionsDiv.className = 'emoji-suggestions';
+    emojiSuggestionsDiv.style.display = 'none';
+    document.body.appendChild(emojiSuggestionsDiv);
+
+    // Add event listeners for input
+    inputElement.addEventListener('input', handleInputChange);
+    inputElement.addEventListener('keydown', handleInputKeydown);
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (e.target !== inputElement && e.target.closest('#emoji-suggestions') === null) {
+            hideEmojiSuggestions();
+        }
+    });
+};
+
+/**
+ * Handle input changes to detect emoji autocomplete triggers
+ * @param {Event} e - The input event
+ */
+const handleInputChange = (e) => {
+    const inputElement = e.target;
+    const text = inputElement.value;
+    const cursorPos = inputElement.selectionStart;
+
+    // Find the position of the last colon before cursor
+    let colonPos = text.lastIndexOf(':', cursorPos - 1);
+
+    // Check if we're in the middle of typing an emoji shortcode
+    if (colonPos !== -1 && text.substring(colonPos, cursorPos).indexOf(' ') === -1) {
+        // Extract search text (without the colon)
+        emojiSearchText = text.substring(colonPos + 1, cursorPos);
+
+        if (emojiSearchText.length > 0) {
+            showEmojiSuggestions(emojiSearchText, inputElement);
+        } else {
+            hideEmojiSuggestions();
+        }
+    } else {
+        hideEmojiSuggestions();
+    }
+};
+
+/**
+ * Handle keydown events for navigating and selecting emoji suggestions
+ * @param {Event} e - The keydown event
+ */
+const handleInputKeydown = (e) => {
+    if (!showingSuggestions) return;
+
+    const suggestionsContainer = document.getElementById('emoji-suggestions');
+    const suggestions = suggestionsContainer.querySelectorAll('div');
+
+    switch (e.key) {
+        case 'ArrowDown':
+            e.preventDefault();
+            selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, suggestions.length - 1);
+            updateSelectedSuggestion();
+            break;
+
+        case 'ArrowUp':
+            e.preventDefault();
+            selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, 0);
+            updateSelectedSuggestion();
+            break;
+
+        case 'Enter':
+        case 'Tab':
+            if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < suggestions.length) {
+                e.preventDefault();
+                insertSelectedEmoji();
+            }
+            break;
+
+        case 'Escape':
+            hideEmojiSuggestions();
+            break;
+    }
+};
+
+/**
+ * Show emoji suggestions based on search text
+ * @param {string} searchText - Text to filter emojis by
+ * @param {HTMLElement} inputElement - The input element
+ */
+const showEmojiSuggestions = (searchText, inputElement) => {
+    const suggestionsContainer = document.getElementById('emoji-suggestions');
+
+    // Filter emojis based on search text
+    const filteredEmojis = Object.keys(emojiMap).filter(code =>
+        code.substring(1, code.length - 1).toLowerCase().includes(searchText.toLowerCase())
+    );
+
+    // If no matches, hide suggestions
+    if (filteredEmojis.length === 0) {
+        hideEmojiSuggestions();
+        return;
+    }
+
+    // Clear previous suggestions
+    suggestionsContainer.innerHTML = '';
+
+    // Add new suggestions (limit to first 10 for performance)
+    const maxSuggestions = Math.min(filteredEmojis.length, 10);
+    for (let i = 0; i < maxSuggestions; i++) {
+        const code = filteredEmojis[i];
+        const entity = emojiMap[code];
+
+        const suggestionDiv = document.createElement('div');
+        suggestionDiv.className = 'emoji-suggestion';
+        suggestionDiv.innerHTML = `<span class="emoji-preview">${entity}</span><span class="emoji-code">${code}</span>`;
+        suggestionDiv.dataset.emojiCode = code;
+
+        suggestionDiv.addEventListener('click', () => {
+            insertEmoji(code);
+        });
+
+        suggestionsContainer.appendChild(suggestionDiv);
+    }
+
+    // Position and show suggestions
+    const inputRect = inputElement.getBoundingClientRect();
+    suggestionsContainer.style.top = `${inputRect.bottom}px`;
+    suggestionsContainer.style.left = `${inputRect.left}px`;
+    suggestionsContainer.style.display = 'block';
+
+    // Reset selection
+    selectedSuggestionIndex = -1;
+
+    showingSuggestions = true;
+};
+
+/**
+ * Hide emoji suggestions
+ */
+const hideEmojiSuggestions = () => {
+    const suggestionsContainer = document.getElementById('emoji-suggestions');
+    suggestionsContainer.style.display = 'none';
+    showingSuggestions = false;
+    selectedSuggestionIndex = -1;
+};
+
+const updateSelectedSuggestion = () => {
+    const suggestions = document.querySelectorAll('.emoji-suggestion');
+
+    // Remove selected class from all suggestions
+    suggestions.forEach(suggestion => {
+        suggestion.classList.remove('selected');
+    });
+
+    // Add selected class to current suggestion
+    if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < suggestions.length) {
+        suggestions[selectedSuggestionIndex].classList.add('selected');
+        // Make sure the selected item is visible
+        suggestions[selectedSuggestionIndex].scrollIntoView({ block: 'nearest' });
+    }
+};
+
+const insertSelectedEmoji = () => {
+    const suggestions = document.querySelectorAll('.emoji-suggestion');
+    if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < suggestions.length) {
+        const selectedCode = suggestions[selectedSuggestionIndex].dataset.emojiCode;
+        insertEmoji(selectedCode);
+    }
+};
+
+const insertEmoji = (emojiCode) => {
+    const inputElement = document.getElementById('messageInput');
+    const text = inputElement.value;
+    const cursorPos = inputElement.selectionStart;
+
+    // Find the position of the last colon before cursor
+    const colonPos = text.lastIndexOf(':', cursorPos - 1);
+
+    if (colonPos !== -1) {
+        // Replace the partial emoji code with the full code
+        const newText = text.substring(0, colonPos) + emojiCode + text.substring(cursorPos);
+        inputElement.value = newText;
+
+        // Move cursor after inserted emoji
+        const newCursorPos = colonPos + emojiCode.length;
+        inputElement.setSelectionRange(newCursorPos, newCursorPos);
+    }
+
+    hideEmojiSuggestions();
+    inputElement.focus();
+};
+
+
+
+// Initialize emoji autocomplete when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initEmojiAutocomplete();
+
+    // Add CSS styles for emoji suggestions
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+        .emoji-suggestions {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 250px;
+        }
+        
+        .emoji-suggestion {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .emoji-suggestion:hover, .emoji-suggestion.selected {
+            background-color: #f0f0f0;
+        }
+        
+        .emoji-preview {
+            font-size: 18px;
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .emoji-code {
+            color: #666;
+        }
+    `;
+    document.head.appendChild(styleElement);
+});
+
+
+
 
 
 const deleteMessage = async (messageId) => {
@@ -261,7 +674,7 @@ const deleteMessage = async (messageId) => {
         console.log('Delete response:', data);
 
         if (data.success) {
-            fetchMessages(); // Refresh messages
+            fetchMessages();
         } else {
             alert('Failed to delete message: ' + data.message);
         }
@@ -274,13 +687,40 @@ const editMessage = (messageId) => {
     const input = document.getElementById('messageInput');
     if (!input) return;
 
-    editingMessageId = messageId; // Set the message we want to edit
-    input.placeholder = 'Editing message...'; // Show user that they are editing
-    input.focus(); // Focus input box
+    editingMessageId = messageId;
+    input.placeholder = 'Editing message...';
+    input.focus();
 };
 
 
-// === Event Listeners ===
+async function checkMessageWithVirusTotal(messageText) {
+    // Regex to detect URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urls = messageText.match(urlRegex);
+
+    if (!urls || urls.length === 0) {
+        return { safe: true }; // No URLs = Safe
+    }
+
+    const url = urls[0]; // Check first URL only for now
+    try {
+        const proxyUrl = `../controler/virusTotal.php?url=${encodeURIComponent(url)}`;
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+
+        const stats = data?.data?.attributes?.stats;
+
+        if (stats?.malicious > 0 || stats?.suspicious > 0) {
+            return { safe: false, url, stats };
+        }
+
+        return { safe: true };
+    } catch (err) {
+        console.error('Erreur lors de la vérification VirusTotal:', err);
+        return { safe: false, url, error: err.message };
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadChannels();
@@ -301,3 +741,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.getElementById('sendMessageButton').addEventListener('click', sendMessage);
+
+
+

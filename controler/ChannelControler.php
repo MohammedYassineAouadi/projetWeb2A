@@ -4,7 +4,7 @@ require_once '../model/ModelChannel.php';
 require_once __DIR__ . '/../model/ModelChannel.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Show errors for debugging
+
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 

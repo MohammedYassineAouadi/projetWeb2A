@@ -1,0 +1,4 @@
+[2025-05-05T18:02:39.633Z] User: 1 | Channel: 1 | Content: merde
+[2025-05-05T18:05:29.832Z] User: 1 | Channel: 1 | Content: test
+[2025-05-05T18:05:30.437Z] User: 1 | Channel: 1 | Content: test
+[2025-05-05T18:10:25.400Z] User: 100 | Channel: 1 | Content: test

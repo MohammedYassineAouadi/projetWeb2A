@@ -1,7 +1,7 @@
 <?php
 
-require_once '../model/Message.php'; // Adjust this path if needed
-require_once 'messageControler.php'; // Adjust if your controller is in another folder
+require_once '../model/Message.php';
+require_once 'messageControler.php';
 
 header('Content-Type: application/json');
 

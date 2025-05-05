@@ -1,6 +1,6 @@
 <?php
-require_once '../model/message.php'; // Adjust path if needed
-require_once 'messageControler.php'; // Adjust path if needed
+require_once '../model/message.php';
+require_once 'messageControler.php';
 
 header('Content-Type: application/json');
 

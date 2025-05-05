@@ -461,3 +461,122 @@ html {
 
 
 /*new*/
+/* Anonymous Mode Toggle Styles */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.anonymous-toggle-container {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.anonymous-label {
+    margin-right: 8px;
+    font-size: 14px;
+    color: #777;
+}
+
+.anonymous-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.anonymous-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.anonymous-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.anonymous-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .anonymous-slider {
+    background-color: #2196F3;
+}
+
+input:focus + .anonymous-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .anonymous-slider:before {
+    transform: translateX(22px);
+}
+
+/* Anonymous Mode Active Styles */
+body.anonymous-mode .chat-window {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+}
+
+body.anonymous-mode .chat-header {
+    background-color: #333;
+    border-bottom: 1px solid #444;
+}
+
+body.anonymous-mode .chat-messages {
+    background-color: #2a2a2a;
+}
+
+body.anonymous-mode .message-bubble {
+    background-color: #444;
+    color: #f1f1f1;
+}
+
+body.anonymous-mode .chat-input {
+    background-color: #333;
+    border-top: 1px solid #444;
+}
+
+body.anonymous-mode .chat-input input {
+    background-color: #444;
+    color: #f1f1f1;
+    border: 1px solid #555;
+}
+
+body.anonymous-mode .chat-input button {
+    background-color: #2196F3;
+    color: white;
+}
+
+body.anonymous-mode .anonymous-label {
+    color: #f1f1f1;
+}
+
+/* Anonymous Message Style */
+.anonymous-message .username::after {
+    content: " (Anonymous)";
+    color: #888;
+    font-style: italic;
+}
+
+body.anonymous-mode .anonymous-message .username {
+    color: #AAA;
+    font-style: italic;
+}

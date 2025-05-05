@@ -1,6 +1,6 @@
 <?php
 
-require_once '../model/database.php'; // or whatever gives you $db access
+require_once '../model/database.php';
 
 header('Content-Type: application/json');
 

@@ -3,7 +3,7 @@ require_once '../model/message.php';
 
 class MessageController
 {
-    // Add a new message
+
     public function createMessage($channel_id, $user_id, $content)
     {
         try {
@@ -22,7 +22,6 @@ class MessageController
         }
     }
 
-    // Get all messages for a channel
     public function getMessagesByChannel($channel_id)
     {
         try {
@@ -39,7 +38,7 @@ class MessageController
         }
     }
 
-    // Delete a message
+
     public function deleteMessage($id)
     {
         try {
@@ -63,7 +62,6 @@ class MessageController
         }
     }
 
-    // Get a single message by ID
     public function getMessageById($id)
     {
         try {
@@ -94,7 +92,6 @@ class MessageController
     }
 
 
-// Update a message
     public function updateMessage($id, $newContent)
     {
         try {
