@@ -1,18 +1,23 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-if (isset($_GET['file'])) {
-    $file = basename($_GET['file']);
-    $path = '../uploads/' . $file;
+if (isset($_GET['url'])) {
+    $url = $_GET['url'];
+    echo "URL reçue : " . htmlspecialchars($url) . "<br>";  // Afficher l'URL reçue pour débogage
 
-    if (file_exists($path)) {
+    $parsedUrl = parse_url($url);
+    $localPath = $_SERVER['DOCUMENT_ROOT'] . $parsedUrl['path'];
+    echo "Chemin local : " . $localPath . "<br>";  // Afficher le chemin local
+
+    if (file_exists($localPath)) {
+        echo "Fichier trouvé : " . $localPath . "<br>";  // Vérifier si le fichier existe
         header('Content-Type: application/pdf');
-        readfile($path);
+        readfile($localPath);
     } else {
+        echo "Fichier introuvable : $localPath";  // Afficher un message d'erreur si le fichier n'est pas trouvé
         http_response_code(404);
-        echo "Fichier introuvable.";
     }
-} else {
-    http_response_code(400);
-    echo "Paramètre manquant.";
+    exit;
 }
+?>

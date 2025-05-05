@@ -1,13 +1,28 @@
 <?php
-require_once(__DIR__ . "/../../config.php"); 
+require_once(__DIR__ . "/../../config.php");
 
-$pdo = config::getConnexion();
+try {
+    // Connexion à la base
+    $conn = config::getConnexion();
 
-// Récupérer les PDFs
-$sql = "SELECT * FROM pdf"; 
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$pdfs = $stmt->fetchAll();
+    // ID de l'utilisateur (temporaire, ici en dur pour test avec un seul utilisateur)
+    $id_user = 1;
+
+    // Préparer et exécuter la requête
+    $stmt = $conn->prepare("
+        SELECT id_pdf, pages_lues, total_pages, pourcentage, date_maj
+        FROM progression_lecture
+        WHERE id = :id_user
+        ORDER BY date_maj DESC
+    ");
+    $stmt->execute([':id_user' => $id_user]);
+
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    
+} catch (PDOException $e) {
+    echo "Erreur : " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -43,6 +58,8 @@ $pdfs = $stmt->fetchAll();
 
 		gtag('config', 'UA-119386393-1');
 	</script>
+	    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
 	<div class="pre-loader">
@@ -166,10 +183,8 @@ $pdfs = $stmt->fetchAll();
 			<div class="user-info-dropdown">
 				<div class="dropdown">
 					<a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-						<span class="user-icon">
-							<img src="vendors/images/photo1.jpg" alt="">
-						</span>
-						<span class="user-name">Ross C. Lopez</span>
+						
+						<span class="user-name">StartupAcademy</span>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
 						<a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
@@ -263,7 +278,7 @@ $pdfs = $stmt->fetchAll();
 	<div class="left-side-bar">
 		<div class="brand-logo">
 			<a href="index.html">
-				<img src="vendors/images/logo.png" alt="" class="dark-logo">
+				<img src="vendors/images/deskapp-logo.svg" alt="" class="dark-logo">
 				<img src="vendors/images/logo.png" alt="" class="light-logo">
 			</a>
 			<div class="close-sidebar" data-toggle="left-sidebar-close">
@@ -292,15 +307,7 @@ $pdfs = $stmt->fetchAll();
 						</ul>
 					</li>
 					
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-library"></span><span class="mtext">Tables</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="basic-table.html">Basic Tables</a></li>
-							<li><a href="datatable.html">DataTables</a></li>
-						</ul>
-					</li>
+					
 					
 				
 				</ul>
@@ -310,105 +317,84 @@ $pdfs = $stmt->fetchAll();
 	<div class="mobile-menu-overlay"></div>
 
 	<div class="main-container">
-		<div class="pd-ltr-20 xs-pd-20-10">
-			<div class="min-height-200px">
-				<div class="page-header">
-					<div class="row">
-						<div class="col-md-6 col-sm-12">
-							<div class="title">
-								<h4>PDF Liste</h4>
-							</div>
-							<nav aria-label="breadcrumb" role="navigation">
-								<ol class="breadcrumb">
-									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-									<li class="breadcrumb-item active" aria-current="page">PDF Liste</li>
-								</ol>
-							</nav>
-						</div>
+		<div class="pd-ltr-20">
+			<div class="card-box pd-20 height-100-p mb-30">
+				<div class="row align-items-center">
+					<div class="col-md-4">
+						<img src="vendors/images/banner-img.png" alt="">
+					</div>
+					<div class="col-md-8">
+						<h4 class="font-20 weight-500 mb-10 text-capitalize">
+							Welcome back <div class="weight-600 font-30 text-blue">Johnny Brown!</div>
+						</h4>
+						<p class="font-18 max-width-600">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde hic non repellendus debitis iure, doloremque assumenda. Autem modi, corrupti, nobis ea iure fugiat, veniam non quaerat mollitia animi error corporis.</p>
 					</div>
 				</div>
-				<!-- Simple Datatable start -->
-				<div class="card-box mb-30">
-					<div class="pd-20">
-						<h4 class="text-blue h4">Liste</h4>
-						<p class="mb-0">You can find more options <a class="text-primary" href="https://datatables.net/" target="_blank">Click Here</a></p>
-					</div>
-					<div class="pb-20">
-						<table class="data-table table stripe hover nowrap">
-							<thead>
-								<tr>
-									<th class="table-plus datatable-nosort">Titre</th>
-									<th>id</th>
-									<th>Url</th>
-									<th>Type</th>
-									<th>descpription</th>
-
-
-									<th class="datatable-nosort">Action</th>
-								</tr>
-							</thead>
-							<tbody id="pdf-list-body">
-                            <?php
-							// Vérifier si des données existent et les afficher
-							if ($pdfs && count($pdfs) > 0) {
-								foreach ($pdfs as $pdf) {
-									echo "<tr>";
-									echo "<td>" . htmlspecialchars($pdf['titre']) . "</td>";
-									echo "<td>" . htmlspecialchars($pdf['id_pdf']) . "</td>";
-									echo "<td>" . htmlspecialchars($pdf['url']) . "</td>";
-									echo "<td>" . htmlspecialchars($pdf['Type']) . "</td>";
-									echo "<td>" . htmlspecialchars($pdf['description_P']) . "</td>";
-
-
-									echo "<td><a href='" . htmlspecialchars($pdf['url']) . "' target='_blank'>Voir PDF</a></td>";
-									
-									echo "<td>
-									<div class='dropdown'>
-										<a class='btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle' href='#' role='button' data-toggle='dropdown'>
-											<i class='dw dw-more'></i>
-										</a>
-										<div class='dropdown-menu dropdown-menu-right dropdown-menu-icon-list'>
-											<a class='dropdown-item' href='deletePdf.php?id_pdf=" . $pdf['id_pdf'] . "' onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce fichier PDF ?\");'><i class='dw dw-delete-3'></i> Delete</a>
-											<a class='dropdown-item' href='updatePdf.php?id_pdf=" . $pdf['id_pdf'] . "'><i class='dw dw-edit2'></i> Edit</a>
-</div>
-
-										</div>
-									</div>
-								</td>";
-
-									echo "</tr>";
-								}
-							} else {
-								echo "<tr><td colspan='4'>Aucune donnée à afficher</td></tr>";
-							}
-							?>							
-                            </tbody>
-						</table>
-					</div>
-				</div>
-				<!-- Simple Datatable End -->
 			</div>
-			<div class="footer-wrap pd-20 mb-20 card-box">
-				DeskApp - Bootstrap 4 Admin Template By <a href="https://github.com/dropways" target="_blank">Ankit Hingarajiya</a>
-			</div>
-		</div>
-	</div>
-	
-	<!-- JS -->
+			<br></br>
+<br></br>
+			<h2>📊 Statistiques de lecture </h2>
+<br></br>
+
+<?php if (count($results) > 0): ?>
+    <!-- Conteneur pour ajuster le taille -->
+    <div style="width: 100%; margin: auto;">
+        <canvas id="readingChart"></canvas>
+    </div>
+    <script>
+        const ctx = document.getElementById('readingChart').getContext('2d');
+		
+        const data = {
+            labels: ['Pages lues', 'Pages restantes'],
+            datasets: [{
+                label: 'Statistiques de lecture',
+                data: [
+                    <?php 
+                    $totalPages = 0;
+                    $pagesLues = 0;
+                    foreach ($results as $row) {
+                        $totalPages += $row['total_pages'];
+                        $pagesLues += $row['pages_lues'];
+                    }
+                    $pagesRestantes = $totalPages - $pagesLues;
+                    echo "$pagesLues, $pagesRestantes";
+                    ?>
+                ],
+                backgroundColor: ['#001f3f','#cc5500'],
+                hoverOffset: 4
+            }]
+        };
+
+        const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,  // Pour que le graphique soit responsive
+                maintainAspectRatio: false,  // Permet de gérer la taille
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        };
+
+        const readingChart = new Chart(ctx, config);
+    </script>
+<?php else: ?>
+    <p>Aucune donnée trouvée pour cet utilisateur.</p>
+<?php endif; ?>
+
+	<!-- js -->
 	<script src="vendors/scripts/core.js"></script>
 	<script src="vendors/scripts/script.min.js"></script>
 	<script src="vendors/scripts/process.js"></script>
 	<script src="vendors/scripts/layout-settings.js"></script>
+	<script src="src/plugins/apexcharts/apexcharts.min.js"></script>
 	<script src="src/plugins/datatables/js/jquery.dataTables.min.js"></script>
 	<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
 	<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
 	<script src="src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
-	<script src="src/plugins/datatables/js/dataTables.buttons.min.js"></script>
-	<script src="src/plugins/datatables/js/buttons.bootstrap4.min.js"></script>
-	<script src="src/plugins/datatables/js/buttons.print.min.js"></script>
-	<script src="src/plugins/datatables/js/buttons.html5.min.js"></script>
-	<script src="src/plugins/datatables/js/buttons.flash.min.js"></script>
-	<script src="src/plugins/datatables/js/pdfmake.min.js"></script>
-	<script src="src/plugins/datatables/js/vfs_fonts.js"></script>
-	<script src="vendors/scripts/datatable-setting.js"></script>
-	
+	<script src="vendors/scripts/dashboard.js"></script>
+</body>
+</html>

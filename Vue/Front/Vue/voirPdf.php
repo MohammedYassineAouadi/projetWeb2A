@@ -152,15 +152,34 @@ https://templatemo.com/tm-548-training-studio
 <!-- Barre de progression -->
 <div style="width: 100%; background-color: #eee; height: 10px; margin-top: 10px;">
     
-    <div id="progress-bar" style="background-color: #4CAF50; height: 100%; width: 0%;"></div>
+<progress id="progress-bar" value="0" max="100" style="width: 100%; height: 20px;"></progress>
 </div>
 
 <!-- Boutons de navigation -->
-<div style="margin-top: 20px;">
-    <button id="prev-button">Page Précédente</button>
-    <button id="next-button" style="margin-left: 10px;">Page Suivante</button>
-    <button id="save-progress">Enregistrer ma progression</button>
+<style>
+    .nav-button {
+        background-color: #001f3f; /* Bleu nuit */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    }
 
+    .nav-button:hover {
+        background-color: #ff851b; /* Orange foncé */
+        transform: scale(1.05);
+    }
+</style>
+
+<div style="margin-top: 20px; text-align: center;">
+    <button id="prev-button" class="nav-button">⬅️ Page Précédente</button>
+    <button id="next-button" class="nav-button">Page Suivante ➡️</button>
+    <button id="save-progress" class="nav-button">💾 Enregistrer ma progression</button>
 </div>
 
         
@@ -269,211 +288,118 @@ https://templatemo.com/tm-548-training-studio
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
 <script>
-let pdfDoc = null;
-let currentPage = 1;
-let totalPages = 100;
-let maxPageSeen = 1;
-let pageEnterTime = Date.now();
+document.addEventListener("DOMContentLoaded", function () {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js';
 
-const canvas = document.getElementById('pdf-canvas');
-const context = canvas.getContext('2d');
-const progressBar = document.getElementById('progress-bar');
+    let currentPage = 1;
+    let pdfDoc = null;
 
-// Fonction pour réinitialiser le visionneur
-function resetPdfViewer() {
-    pdfDoc = null;
-    currentPage = 1;
-    maxPageSeen = 1;
-    progressBar.style.width = '0%';
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-}
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
 
-// Fonction pour charger un nouveau PDF
-function loadNewPdf(pdfUrl) {
-    resetPdfViewer();  // Réinitialiser les données du précédent PDF
-    console.log("Chargement du PDF depuis : ", pdfUrl);
+    function loadNewPdf(pdfUrl) {
+        const fullUrl = pdfUrl + '?t=' + Date.now(); // Empêche le cache
+        pdfjsLib.getDocument(fullUrl).promise.then(function (pdf) {
+            pdfDoc = pdf;
 
-    const fileName = getBasename(pdfUrl);
-    const proxyUrl = "http://localhost/project/Vue/Front/Vue/loadpdf.php?file=" + encodeURIComponent(fileName);
-
-    fetch(proxyUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erreur de téléchargement du PDF : ${response.statusText}`);
+            const savedPage = parseInt(localStorage.getItem('pdf-current-page'));
+            if (savedPage && savedPage >= 1 && savedPage <= pdfDoc.numPages) {
+                currentPage = savedPage;
+            } else {
+                currentPage = 1;
             }
-            return response.blob();
-        })
-        .then(blob => {
-            const pdfBlobUrl = URL.createObjectURL(blob);
 
-            pdfjsLib.getDocument(pdfBlobUrl).promise.then(function (pdf) {
-                pdfDoc = pdf;
-                totalPages = pdf.numPages;
-                console.log(`Total des pages du PDF : ${totalPages}`);
-                
-                // Récupérer la dernière page vue et la progression depuis localStorage
-                const savedPage = localStorage.getItem('lastPage');
-                const savedProgress = localStorage.getItem('progress');
-
-                currentPage = savedPage ? parseInt(savedPage) : 1; // page courante sauvegardée
-                const progress = savedProgress ? parseFloat(savedProgress) : 0; // progression sauvegardée
-
-                // Récupérer la dernière page vue et ajuster la barre de progression
-                if (progress > 0) {
-                    progressBar.style.width = `${progress}%`;
-                }
-                
-                renderPage(currentPage); // Rendre la page
-            }).catch(error => {
-                console.error("❌ Erreur lors du rendu du PDF :", error);
-            });
-        })
-        .catch(error => {
-            console.error("❌ Erreur lors de la récupération du fichier PDF :", error);
+            renderPage(currentPage);
+            updateProgressBar();
+        }).catch(function (error) {
+            console.error("❌ Erreur de chargement du PDF :", error);
         });
-}
+    }
 
-// Fonction pour afficher une page
-function renderPage(pageNum) {
-    pageEnterTime = Date.now(); // temps d'entrée dans la nouvelle page
+    function saveProgress() {
+        const userId = <?php echo json_encode($userId); ?>;
+        const pdfId = getQueryParam('id_pdf');
+        const pagesLues = currentPage;
+        const totalPages = pdfDoc.numPages;
+        const pourcentage = Math.round((pagesLues / totalPages) * 100);
 
-    pdfDoc.getPage(pageNum).then(function (page) {
-        const scale = 1.5;
-        const viewport = page.getViewport({ scale: scale });
+        if (!userId || !pdfId) return;
 
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        const renderContext = {
-            canvasContext: context,
-            viewport: viewport
+        const postData = {
+            id: userId,
+            id_pdf: pdfId,
+            pages_lues: pagesLues,
+            total_pages: totalPages,
+            pourcentage: pourcentage
         };
 
-        page.render(renderContext).promise.then(() => {
-            console.log(`Page ${pageNum} rendue avec succès`);
-
-            // Mettre à jour la barre de progression
-            if (pageNum > maxPageSeen) {
-                maxPageSeen = pageNum;
-            }
-
-            const progress = (maxPageSeen / totalPages) * 100;
-            progressBar.style.width = `${progress}%`;
-
-            // Sauvegarder la page actuelle et la progression dans localStorage
-            localStorage.setItem('lastPage', pageNum);
-            localStorage.setItem('progress', progress);
+        fetch('progression.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
         }).catch(error => {
-            console.error("❌ Erreur lors du rendu de la page :", error);
+            console.error("Erreur réseau (sauvegarde auto):", error);
         });
-    }).catch(error => {
-        console.error("❌ Erreur lors de la récupération de la page :", error);
-    });
-}
-
-// Extraire le nom du fichier
-function getBasename(path) {
-    return path.substring(path.lastIndexOf('/') + 1);
-}
-
-// Fonction pour charger un PDF à partir de l'URL
-const urlParams = new URLSearchParams(window.location.search);
-const pdfUrl = urlParams.get("url");
-
-if (pdfUrl) {
-    loadNewPdf(pdfUrl); // Charger le PDF à partir de l'URL spécifiée
-}
-
-// Gestion du bouton Page Suivante
-document.getElementById('next-button').addEventListener('click', () => {
-    const timeSpent = Date.now() - pageEnterTime;
-
-    if (currentPage < totalPages) {
-        currentPage++;
-        if (currentPage > maxPageSeen) {
-            maxPageSeen = currentPage;
-        }
-        renderPage(currentPage);
     }
-});
 
-// Gestion du bouton Page Précédente
-document.getElementById('prev-button').addEventListener('click', () => {
-    const timeSpent = Date.now() - pageEnterTime;
+    function renderPage(pageNum) {
+        pdfDoc.getPage(pageNum).then(function (page) {
+            const scale = 1.5;
+            const viewport = page.getViewport({ scale });
+            const canvas = document.getElementById('pdf-canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
 
-    if (currentPage > 1) {
-        currentPage--;
-        // On ne diminue la progression que si le temps passé est très court (< 1 seconde)
-        if (timeSpent < 1000 && currentPage < maxPageSeen) {
-            maxPageSeen = currentPage;
-        }
-        renderPage(currentPage);
-    }
-});
-document.addEventListener('DOMContentLoaded', function() {
-    const saveButton = document.getElementById('save-progress');
-    
-    if (saveButton) {
-        saveButton.addEventListener('click', () => {
-            // Calcul du pourcentage de progression
-            const progress = (maxPageSeen / totalPages) * 100;
-            
-            // Récupérer l'ID du PDF
-            const urlParams = new URLSearchParams(window.location.search);
-            const pdfUrl = urlParams.get("id_pdf");
-            const currentPdfId = getBasename(pdfUrl);  // Vous devez vous assurer que pdfUrl est bien défini
-
-            // Récupérer l'ID utilisateur depuis la session PHP
-            const userId = <?php echo json_encode($userId); ?>;
-
-            if (!userId) {
-                alert("Utilisateur non connecté !");
-                return;
-            }
-
-            // Créer l'objet de données à envoyer
-            const data = {
-                id: userId,
-                id_pdf: currentPdfId,
-                pages_lues: currentPage,
-                total_pages: totalPages,
-                pourcentage: progress
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
             };
+            page.render(renderContext);
 
-            console.log("URL de la requête:", 'progression.php');
-
-            fetch('progression.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'  // En-tête correct pour JSON
-                },
-                body: JSON.stringify(data)  // Convertir l'objet en JSON
-            })
-            .then(response => response.text())  // Récupérer la réponse en texte brut
-            .then(text => {
-                console.log("Réponse brute du serveur:", text);  // Affiche la réponse brute pour voir ce qui est renvoyé par le serveur
-
-                try {
-                    const data = JSON.parse(text);  // Essayer de convertir le texte en JSON
-                    if (data.success) {
-                        console.log('Progression enregistrée avec succès');
-                    } else {
-                        console.error('Erreur lors de l\'enregistrement de la progression', data);
-                    }
-                } catch (error) {
-                    console.error('Erreur lors de la conversion en JSON:', error);
-                    console.error('Réponse brute:', text);  // Afficher la réponse brute en cas d'erreur
-                }
-            })
-            .catch(error => {
-                console.error('Erreur de connexion au serveur:', error);
-            });
+            localStorage.setItem('pdf-current-page', pageNum);
+            updateProgressBar();
+            saveProgress(); // ✅ Sauvegarde automatique ici
         });
     }
+
+    function updateProgressBar() {
+        if (pdfDoc) {
+            const percentage = (currentPage / pdfDoc.numPages) * 100;
+            document.getElementById('progress-bar').value = percentage;
+        }
+    }
+
+    document.getElementById('next-button').addEventListener('click', function () {
+        if (currentPage < pdfDoc.numPages) {
+            currentPage++;
+            renderPage(currentPage);
+        }
+    });
+
+    document.getElementById('prev-button').addEventListener('click', function () {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage(currentPage);
+        }
+    });
+
+    // (Optionnel) Bouton "Manuel" de sauvegarde
+    document.getElementById('save-progress').addEventListener('click', function () {
+        saveProgress();
+        alert("📌 Progression enregistrée manuellement !");
+    });
+
+    const urlParam = getQueryParam("url");
+    if (urlParam) {
+        loadNewPdf(decodeURIComponent(urlParam));
+    }
 });
-
 </script>
-
 
 </body>
 </html>
