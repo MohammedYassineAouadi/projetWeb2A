@@ -7,14 +7,6 @@ $listeTest = $testC->afficherTests();
 
 $score = $_GET['score'] ?? null;
 ?>
-<?php if ($score !== null): ?>
-    <div class="alert alert-success">
-        ✅ Votre score : <strong><?= $score ?>/3</strong>
-    </div>
-<?php endif; ?>
-
-
-
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -23,12 +15,13 @@ $score = $_GET['score'] ?? null;
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <title>Startup Academy - Tests</title>
 
-    <!-- Lien Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Fonts & CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/font-awesome.css">
+    <link rel="stylesheet" href="../assets/css/templatemo-training-studio.css">
 
     <style>
         body {
@@ -82,29 +75,131 @@ $score = $_GET['score'] ?? null;
             background: linear-gradient(45deg, rgba(241, 220, 26, 0.94), rgb(245, 150, 9));
         }
     </style>
-
-    <title>Nos Tests</title>
 </head>
 
 <body>
-    <div class="container my-5">
-        <!-- Titre -->
-        <div class="section-title">
-            <h2>Découvrez nos Tests</h2>
-        </div>
 
-        <!-- Cartes Tests -->
+<!-- ***** Header Start ***** -->
+<header class="header-area header-sticky background-header">
+    <div class="container">
         <div class="row">
-            <?php foreach ($listeTest as $test): ?>
-                <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
-                    <div class="card m-3 p-3 w-100">
-                        <h4><?= htmlspecialchars($test['test_name']) ?></h4>
-                        <a href="detailsTest.php?idTest=<?= $test['idTest'] ?>" class="btn btn-primary mt-auto">Découvrez Plus</a>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+            <div class="col-12">
+                <nav class="main-nav">
+                    <a href="index.html" class="logo">Startup<em> Academy</em></a>
+                    <ul class="nav">
+                        <li class="scroll-to-section"><a href="index.html">Home</a></li>
+                        <li class="scroll-to-section"><a href="classes.html">Classes</a></li>
+                        <li class="scroll-to-section"><a href="schedules.html">Schedules</a></li>
+                        <li class="has-sub">
+                            <a href="javascript:void(0)">Cours</a>
+                            <ul class="sub-menu">
+                                <li><a href="video.html">Videos</a></li>
+                                <li><a href="pdf.html">PDF</a></li>
+                            </ul>
+                        </li>
+                        <li class="has-sub">
+                            <a href="javascript:void(0)">Exams</a>
+                            <ul class="sub-menu">
+                                <li><a href="test.html">Test</a></li>
+                                <li><a href="quiz.html">Quiz</a></li>
+                            </ul>
+                        </li>
+                        <li class="scroll-to-section"><a href="#contact-us">Contact</a></li>
+                        <li class="main-button"><a href="#">Sign Up</a></li>
+                    </ul>
+                    <a class='menu-trigger'><span>Menu</span></a>
+                </nav>
+            </div>
         </div>
     </div>
-</body>
+</header>
+<!-- ***** Header End ***** -->
 
+<!-- Score Alert -->
+<?php if ($score !== null): ?>
+    <div class="container mt-4">
+        <div class="alert alert-success text-center">
+            ✅ Votre score : <strong><?= $score ?>/3</strong>
+        </div>
+    </div>
+<?php endif; ?>
+
+<!-- Tests Section -->
+<div class="container my-5">
+    <div class="section-title">
+        <h2>Découvrez nos Tests</h2>
+    </div>
+
+    <div class="row">
+        <?php foreach ($listeTest as $test): ?>
+            <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                <div class="card m-3 p-3 w-100">
+                    <h4><?= htmlspecialchars($test['test_name']) ?></h4>
+                    <a href="detailsTest.php?idTest=<?= $test['idTest'] ?>" class="btn btn-primary mt-auto">Découvrez Plus</a>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+ <!-- ***** Contact Us Area Starts ***** -->
+    <section class="section" id="contact-us">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-xs-12">
+                    <div id="map">
+                      <iframe src="https://maps.google.com/maps?q=Av.+L%C3%BAcio+Costa,+Rio+de+Janeiro+-+RJ,+Brazil&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="600px" frameborder="0" style="border:0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-xs-12">
+                    <div class="contact-form">
+                        <form id="contact" action="" method="post">
+                          <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                              <fieldset>
+                                <input name="name" type="text" id="name" placeholder="Your Name*" required="">
+                              </fieldset>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                              <fieldset>
+                                <input name="email" type="text" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your Email*" required="">
+                              </fieldset>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                              <fieldset>
+                                <input name="subject" type="text" id="subject" placeholder="Subject">
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-12">
+                              <fieldset>
+                                <textarea name="message" rows="6" id="message" placeholder="Message" required=""></textarea>
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-12">
+                              <fieldset>
+                                <button type="submit" id="form-submit" class="main-button">Send Message</button>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ***** Contact Us Area Ends ***** -->
+<footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; 2020 Training Studio
+                    
+                    - Designed by <a rel="nofollow" href="https://templatemo.com" class="tm-text-link" target="_parent">TemplateMo</a></p>
+                    
+                    <!-- You shall support us a little via PayPal to info@templatemo.com -->
+                    
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
 </html>

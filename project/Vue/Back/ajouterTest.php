@@ -1,42 +1,62 @@
 <?php
-require_once '../../config.php';  // Assure-toi que le chemin est correct
-require_once '../../Model/Test.php';  // Assure-toi que le chemin vers Test.php est correct
-require_once '../../Controller/TestC.php';  // Assure-toi que le chemin vers TestC.php est correct
+require_once '../../config.php';
+require_once '../../Model/Test.php';
+require_once '../../Controller/TestC.php';
 
-// Vérifier si le formulaire est soumis
+$errors = [];
+$test_name = $questionT1 = $reponseT1 = $reponse_correcteT1 = "";
+$questionT2 = $repT2 = $rep_correcteT2 = "";
+$questionT3 = $reponT3 = $repon_correcteT3 = "";
+$idTest = null;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Récupérer les données du formulaire
-    $test_name = $_POST['test_name'];
-    $questionT1 = $_POST['questionT1'];
-    $reponseT1 = $_POST['reponseT1'];
-    $reponse_correcteT1 = $_POST['reponse_correcteT1'];
+    // Nettoyage des champs
+    $test_name = trim($_POST['test_name']);
+    $questionT1 = trim($_POST['questionT1']);
+    $reponseT1 = trim($_POST['reponseT1']);
+    $reponse_correcteT1 = trim($_POST['reponse_correcteT1']);
 
-    $questionT2 = $_POST['questionT2'];
-    $repT2 = $_POST['repT2'];
-    $rep_correcteT2 = $_POST['rep_correcteT2'];
+    $questionT2 = trim($_POST['questionT2']);
+    $repT2 = trim($_POST['repT2']);
+    $rep_correcteT2 = trim($_POST['rep_correcteT2']);
 
-    $questionT3 = $_POST['questionT3'];
-    $reponT3 = $_POST['reponT3'];
-    $repon_correcteT3 = $_POST['repon_correcteT3'];
+    $questionT3 = trim($_POST['questionT3']);
+    $reponT3 = trim($_POST['reponT3']);
+    $repon_correcteT3 = trim($_POST['repon_correcteT3']);
 
-    // Créer un objet Test avec les données récupérées
-    $test = new Test(
-        $test_name, $questionT1, $reponseT1, $reponse_correcteT1,
-        $questionT2, $repT2, $rep_correcteT2,
-        $questionT3, $reponT3, $repon_correcteT3,$idTest
-    );
+    // Contrôles de saisie
+    if (empty($test_name)) $errors['test_name'] = "❌ Le titre du test est requis.";
+    elseif (strlen($test_name) < 3) $errors['test_name_length'] = "❌ Le titre doit contenir au moins 3 caractères.";
 
-    // Instancier le contrôleur et ajouter le test
-    $testController = new TestC();
-    $testController->ajouterTest($test);
+    if (empty($questionT1)) $errors['questionT1'] = "❌ La question 1 est requise.";
+    elseif (strlen($questionT1) < 3) $errors['questionT1_length'] = "❌ La question 1 doit contenir au moins 3 caractères.";
 
-    // Message de succès
-    echo "<p>Le test a été ajouté avec succès !</p>";
+    if (empty($reponseT1)) $errors['reponseT1'] = "❌ La réponse 1 est requise.";
+    if (empty($reponse_correcteT1)) $errors['reponse_correcteT1'] = "❌ La bonne réponse 1 est requise.";
+
+    if (empty($questionT2)) $errors['questionT2'] = "❌ La question 2 est requise.";
+    if (empty($repT2)) $errors['repT2'] = "❌ La réponse 2 est requise.";
+    if (empty($rep_correcteT2)) $errors['rep_correcteT2'] = "❌ La bonne réponse 2 est requise.";
+
+    if (empty($questionT3)) $errors['questionT3'] = "❌ La question 3 est requise.";
+    if (empty($reponT3)) $errors['reponT3'] = "❌ La réponse 3 est requise.";
+    if (empty($repon_correcteT3)) $errors['repon_correcteT3'] = "❌ La bonne réponse 3 est requise.";
+
+    // Si pas d'erreurs, ajouter le test
+    if (empty($errors)) {
+        $test = new Test(
+            $test_name, $questionT1, $reponseT1, $reponse_correcteT1,
+            $questionT2, $repT2, $rep_correcteT2,
+            $questionT3, $reponT3, $repon_correcteT3, $idTest
+        );
+
+        $testController = new TestC();
+        $testController->ajouterTest($test);
+
+        echo "<p style='color:green;'>✅ Le test a été ajouté avec succès !</p>";
+    }
 }
 ?>
-
-
-
 
 
 <!DOCTYPE html>
@@ -376,12 +396,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 						</div>
 					</div>
 					
-                    <form method="POST" action="ajouterTest.php">
+                    <form method="POST" action="ajouterTest.php" novalidate>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
         <div class="col-sm-12 col-md-10">
             <input name="test_name" class="form-control" type="text" placeholder="Titre" required>
-        </div>
+			<?php if (isset($errors['test_name'])) echo "<p style='color:red;'>".$errors['test_name']."</p>"; ?>
+<?php if (isset($errors['test_name_length'])) echo "<p style='color:red;'>".$errors['test_name_length']."</p>"; ?>
+        
+		</div>
     </div>
     <!-- Ajoute d'autres champs ici -->
     <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -392,63 +415,90 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label class="col-sm-12 col-md-2 col-form-label">questionT1</label>
         <div class="col-sm-12 col-md-10">
             <input name="questionT1" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['questionT1'])) echo "<p style='color:red;'>".$errors['questionT1']."</p>"; ?>
+<?php if (isset($errors['questionT1_length'])) echo "<p style='color:red;'>".$errors['questionT1_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">reponseT1</label>
         <div class="col-sm-12 col-md-10">
             <input name="reponseT1" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['reponseT1'])) echo "<p style='color:red;'>".$errors['reponseT1']."</p>"; ?>
+<?php if (isset($errors['reponseT1_length'])) echo "<p style='color:red;'>".$errors['reponseT1_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">reponse_correcteT1</label>
         <div class="col-sm-12 col-md-10">
             <input name="reponse_correcteT1" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['reponse_correcteT1'])) echo "<p style='color:red;'>".$errors['reponse_correcteT1']."</p>"; ?>
+<?php if (isset($errors['reponse_correcteT1_length'])) echo "<p style='color:red;'>".$errors['reponse_correcteT1_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">questionT2</label>
         <div class="col-sm-12 col-md-10">
             <input name="questionT2" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['questionT2'])) echo "<p style='color:red;'>".$errors['questionT2']."</p>"; ?>
+<?php if (isset($errors['questionT2_length'])) echo "<p style='color:red;'>".$errors['questionT2_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">repT2</label>
         <div class="col-sm-12 col-md-10">
             <input name="repT2" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['repT2'])) echo "<p style='color:red;'>".$errors['repT2']."</p>"; ?>
+<?php if (isset($errors['repT2_length'])) echo "<p style='color:red;'>".$errors['repT2_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">rep_correcteT2</label>
         <div class="col-sm-12 col-md-10">
             <input name="rep_correcteT2" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['rep_correcteT2'])) echo "<p style='color:red;'>".$errors['rep_correcteT2']."</p>"; ?>
+<?php if (isset($errors['rep_correcteT2_length'])) echo "<p style='color:red;'>".$errors['rep_correcteT2_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">questionT3</label>
         <div class="col-sm-12 col-md-10">
             <input name="questionT3" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['questionT3'])) echo "<p style='color:red;'>".$errors['questionT3']."</p>"; ?>
+<?php if (isset($errors['questionT3_length'])) echo "<p style='color:red;'>".$errors['questionT3_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">reponT3</label>
         <div class="col-sm-12 col-md-10">
             <input name="reponT3" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['reponT3'])) echo "<p style='color:red;'>".$errors['reponT3']."</p>"; ?>
+<?php if (isset($errors['reponT3_length'])) echo "<p style='color:red;'>".$errors['reponT3_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">repon_correcteT3</label>
         <div class="col-sm-12 col-md-10">
             <input name="repon_correcteT3" class="form-control" type="text">
-        </div>
+			<?php if (isset($errors['repon_correcteT3'])) echo "<p style='color:red;'>".$errors['repon_correcteT3']."</p>"; ?>
+<?php if (isset($errors['repon_correcteT3_length'])) echo "<p style='color:red;'>".$errors['repon_correcteT3_length']."</p>"; ?>
+        
+		</div>
     </div>
 
     <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -462,98 +512,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								<a href="#basic-form1" class="btn btn-primary btn-sm pull-right" rel="content-y"  data-toggle="collapse" role="button"><i class="fa fa-eye-slash"></i> Hide Code</a>
 							</div>
 							<pre><code class="xml copy-pre" id="copy-pre">
-<!--<form>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Text</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" type="text" placeholder="Johnny Brown">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Search</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" placeholder="Search Here" type="search">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Email</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="bootstrap@example.com" type="email">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">URL</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="https://getbootstrap.com" type="url">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Telephone</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="1-(111)-111-1111" type="tel">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Password</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="password" type="password">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Number</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control" value="100" type="number">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="example-datetime-local-input" class="col-sm-12 col-md-2 col-form-label">Date and time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control datetimepicker" placeholder="Choose Date anf time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Date</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control date-picker" placeholder="Select Date" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Month</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control month-picker" placeholder="Select Month" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Time</label>
-		<div class="col-sm-12 col-md-10">
-			<input class="form-control time-picker" placeholder="Select time" type="text">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-sm-12 col-md-2 col-form-label">Select</label>
-		<div class="col-sm-12 col-md-10">
-			<select class="custom-select col-12">
-				<option selected="">Choose...</option>
-				<option value="1">One</option>
-				<option value="2">Two</option>
-				<option value="3">Three</option>
-			</select>
-		</div>
-	</div>
-	
-	
-</form>-->
+
 							</code></pre>
 						</div>
 					</div>
 				</div>
 				<!-- Default Basic Forms End -->
-
-
-				
-
-				
-
 			</div>
 			<div class="footer-wrap pd-20 mb-20 card-box">
 				DeskApp - Bootstrap 4 Admin Template By <a href="https://github.com/dropways" target="_blank">Ankit Hingarajiya</a>

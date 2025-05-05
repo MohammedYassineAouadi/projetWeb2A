@@ -40,6 +40,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Contrôles
     if (empty($quiz_name)) $errors['quiz_name'] = "❌ Le titre est requis.";
+	if (strlen($quiz_name) < 3) 
+    $errors['quiz_name_length'] = "❌ Le titre doit avoir au moins 3 caractères.";
+	 if (isset($errors['quiz_name_length'])) echo "<p style='color:red;'>".$errors['quiz_name_length']."</p>"; 
+
     if (empty($questionQ1)) $errors['questionQ1'] = "❌ La question 1 est requise.";
     if (empty($option1) || empty($option2) || empty($option3)) $errors['optionsQ1'] = "❌ Les 3 options de Q1 sont requises.";
     if (!in_array($correct_option1, [$option1, $option2, $option3])) $errors['correct_option1'] = "❌ La réponse 1 n'est pas valide.";
@@ -54,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($id_video) || !is_numeric($id_video)) $errors['id_video'] = "❌ L'ID vidéo est requis et doit être un nombre.";
 
+	
     // Ajout si pas d'erreurs
     if (empty($errors)) {
         $quiz = new Quiz(
@@ -76,8 +81,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html>
@@ -417,15 +420,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					</div>
 					<!-- Formulaire HTML pour ajouter un quiz -->
 					
-					<form method="POST" action="">
+					<form method="POST" action="" novalidate>
     <!-- Titre du Quiz -->
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Titre</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" type="text" name="quiz_name" value="<?= htmlspecialchars($quiz_name ?? '') ?>" placeholder="Titre du quiz" required>
-            <?php if (isset($errors['quiz_name'])): ?>
-                <small style="color: red;"><?= $errors['quiz_name'] ?></small>
-            <?php endif; ?>
+            <?php if (isset($errors['quiz_name'])) echo "<p style='color:red;'>".$errors['quiz_name']."</p>"; ?>
+<?php if (isset($errors['quiz_name_length'])) echo "<p style='color:red;'>".$errors['quiz_name_length']."</p>"; ?>
         </div>
     </div>
 
@@ -434,9 +436,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label class="col-sm-12 col-md-2 col-form-label">Question 1</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="questionQ1" value="<?= htmlspecialchars($questionQ1 ?? '') ?>" placeholder="Question 1" type="text" required>
-            <?php if (isset($errors['questionQ1'])): ?>
-                <small style="color: red;"><?= $errors['questionQ1'] ?></small>
-            <?php endif; ?>
+           
+
+			<?php if (isset($errors['questionQ1'])) echo "<p style='color:red;'>".$errors['questionQ1']."</p>"; ?>
+			<?php if (isset($errors['questionQ1_length'])) echo "<p style='color:red;'>".$errors['questionQ1_length']."</p>"; ?>
         </div>
     </div>
     <!-- Options pour Question 1 -->
@@ -444,19 +447,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="option1" value="<?= htmlspecialchars($option1 ?? '') ?>" type="text" placeholder="Option 1" required>
+			<?php if (isset($errors['option1'])) echo "<p style='color:red;'>".$errors['option1']."</p>"; ?>
+			<?php if (isset($errors['option1_length'])) echo "<p style='color:red;'>".$errors['option1_length']."</p>"; ?>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="option2" value="<?= htmlspecialchars($option2 ?? '') ?>" type="text" placeholder="Option 2" required>
-        </div>
+			<?php if (isset($errors['option2'])) echo "<p style='color:red;'>".$errors['option2']."</p>"; ?>
+			<?php if (isset($errors['option2_length'])) echo "<p style='color:red;'>".$errors['option2_length']."</p>"; ?>
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="option3" value="<?= htmlspecialchars($option3 ?? '') ?>" type="text" placeholder="Option 3" required>
-        </div>
+			<?php if (isset($errors['option3'])) echo "<p style='color:red;'>".$errors['option3']."</p>"; ?>
+			<?php if (isset($errors['option3_length'])) echo "<p style='color:red;'>".$errors['option3_length']."</p>"; ?>
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Correct Option 1</label>
@@ -465,6 +474,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php if (isset($errors['correct_option1'])): ?>
                 <small style="color: red;"><?= $errors['correct_option1'] ?></small>
             <?php endif; ?>
+			<?php if (isset($errors['correct_option1'])) echo "<p style='color:red;'>".$errors['correct_option1']."</p>"; ?>
+			<?php if (isset($errors['correct_option1_length'])) echo "<p style='color:red;'>".$errors['correct_option1_length']."</p>"; ?>
+		
         </div>
     </div>
 
@@ -473,26 +485,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label class="col-sm-12 col-md-2 col-form-label">Question 2</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="questionQ2" value="<?= htmlspecialchars($questionQ2 ?? '') ?>" placeholder="Question 2" type="text" required>
-        </div>
+			<?php if (isset($errors['questionQ2'])) echo "<p style='color:red;'>".$errors['questionQ2']."</p>"; ?>
+			<?php if (isset($errors['questionQ2_length'])) echo "<p style='color:red;'>".$errors['questionQ2_length']."</p>"; ?>
+		
+		</div>
     </div>
     <!-- Options pour Question 2 -->
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="op1" value="<?= htmlspecialchars($op1 ?? '') ?>" type="text" placeholder="Option 1" required>
-        </div>
+			<?php if (isset($errors['op1'])) echo "<p style='color:red;'>".$errors['op1']."</p>"; ?>
+			<?php if (isset($errors['op1_length'])) echo "<p style='color:red;'>".$errors['op1_length']."</p>"; ?>
+		
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="op2" value="<?= htmlspecialchars($op2 ?? '') ?>" type="text" placeholder="Option 2" required>
-        </div>
+			<?php if (isset($errors['op2'])) echo "<p style='color:red;'>".$errors['op2']."</p>"; ?>
+			<?php if (isset($errors['op2_length'])) echo "<p style='color:red;'>".$errors['op2_length']."</p>"; ?>
+		
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="op3" value="<?= htmlspecialchars($op3 ?? '') ?>" type="text" placeholder="Option 3" required>
-        </div>
+			<?php if (isset($errors['op3'])) echo "<p style='color:red;'>".$errors['op3']."</p>"; ?>
+			<?php if (isset($errors['op3_length'])) echo "<p style='color:red;'>".$errors['op3_length']."</p>"; ?>
+		
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Correct Option 2</label>
@@ -501,7 +525,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php if (isset($errors['correct_op2'])): ?>
                 <small style="color: red;"><?= $errors['correct_op2'] ?></small>
             <?php endif; ?>
-        </div>
+			<?php if (isset($errors['correct_op2'])) echo "<p style='color:red;'>".$errors['correct_op2']."</p>"; ?>
+			<?php if (isset($errors['correct_op2_length'])) echo "<p style='color:red;'>".$errors['correct_op2_length']."</p>"; ?>
+		
+		</div>
     </div>
 
     <!-- Question 3 -->
@@ -509,26 +536,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label class="col-sm-12 col-md-2 col-form-label">Question 3</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="questionQ3" value="<?= htmlspecialchars($questionQ3 ?? '') ?>" placeholder="Question 3" type="text" required>
-        </div>
+			<?php if (isset($errors['questionQ3'])) echo "<p style='color:red;'>".$errors['questionQ3']."</p>"; ?>
+			<?php if (isset($errors['questionQ3_length'])) echo "<p style='color:red;'>".$errors['questionQ3_length']."</p>"; ?>
+		
+		</div>
     </div>
     <!-- Options pour Question 3 -->
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 1</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="opt1" value="<?= htmlspecialchars($opt1 ?? '') ?>" type="text" placeholder="Option 1" required>
-        </div>
+			<?php if (isset($errors['opt1'])) echo "<p style='color:red;'>".$errors['opt1']."</p>"; ?>
+			<?php if (isset($errors['opt1_length'])) echo "<p style='color:red;'>".$errors['opt1_length']."</p>"; ?>
+		
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 2</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="opt2" value="<?= htmlspecialchars($opt2 ?? '') ?>" type="text" placeholder="Option 2" required>
-        </div>
+			<?php if (isset($errors['opt2'])) echo "<p style='color:red;'>".$errors['opt2']."</p>"; ?>
+			<?php if (isset($errors['opt2_length'])) echo "<p style='color:red;'>".$errors['opt2_length']."</p>"; ?>
+		
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Option 3</label>
         <div class="col-sm-12 col-md-10">
             <input class="form-control" name="opt3" value="<?= htmlspecialchars($opt3 ?? '') ?>" type="text" placeholder="Option 3" required>
-        </div>
+			<?php if (isset($errors['opt3'])) echo "<p style='color:red;'>".$errors['opt3']."</p>"; ?>
+			<?php if (isset($errors['opt3_length'])) echo "<p style='color:red;'>".$errors['opt3_length']."</p>"; ?>
+		
+		</div>
     </div>
     <div class="form-group row">
         <label class="col-sm-12 col-md-2 col-form-label">Correct Option 3</label>
@@ -537,7 +576,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php if (isset($errors['correct_opt3'])): ?>
                 <small style="color: red;"><?= $errors['correct_opt3'] ?></small>
             <?php endif; ?>
-        </div>
+			<?php if (isset($errors['correct_opt3'])) echo "<p style='color:red;'>".$errors['correct_opt3']."</p>"; ?>
+			<?php if (isset($errors['correct_opt3_length'])) echo "<p style='color:red;'>".$errors['correct_opt3_length']."</p>"; ?>
+		
+		</div>
     </div>
 
     <!-- ID Vidéo -->
@@ -548,7 +590,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php if (isset($errors['id_video'])): ?>
                 <small style="color: red;"><?= $errors['id_video'] ?></small>
             <?php endif; ?>
-        </div>
+			<?php if (isset($errors['option3'])) echo "<p style='color:red;'>".$errors['option3']."</p>"; ?>
+			<?php if (isset($errors['option3_length'])) echo "<p style='color:red;'>".$errors['option3_length']."</p>"; ?>
+		
+		</div>
     </div>
 	<div class="form-group row">
     <label class="col-sm-12 col-md-2 col-form-label">ID Test</label>
