@@ -214,7 +214,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <?php if ($score >= 2): ?>
                 <div class="alert alert-info mt-2">
-                    ✅ Score suffisant ! <a href="Quiz.php" class="btn btn-secondary">Accéder au Quiz</a>
+                    ✅ Score suffisant ! <a href="Quiz.php?idTest=<?= $test['idTest'] ?>">Voir les quiz</a>
+
+                    
                 </div>
             <?php else: ?>
                 <div class="alert alert-danger">

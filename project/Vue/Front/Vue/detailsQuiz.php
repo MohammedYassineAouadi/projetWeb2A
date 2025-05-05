@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $insertScore = $db->prepare("INSERT INTO score (iduser, idQuiz, resultatQuiz) VALUES (?, ?, ?)");
             $insertScore->execute([$iduser, $idQuiz, $score]);
         }
+        
     }
     
 

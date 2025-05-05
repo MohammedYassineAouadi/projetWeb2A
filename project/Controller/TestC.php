@@ -154,6 +154,19 @@ public function enregistrerScore($iduser, $resultatQuiz = null, $resultatTest = 
         echo "Erreur : " . $e->getMessage();
     }
 }
+public function getPdfById($id)
+{
+    $sql = "SELECT * FROM tests WHERE idTest = :id";
+    $db = config::getConnexion();
+    try {
+        $query = $db->prepare($sql);
+        $query->bindParam(':id', $id);
+        $query->execute();
+        return $query->fetch();
+    } catch (Exception $e) {
+        die('Erreur: ' . $e->getMessage());
+    }
+}
 }
 
 

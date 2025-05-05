@@ -1,14 +1,28 @@
 <?php
 require_once __DIR__ . '/../../../config.php';
-require_once __DIR__ . '/../../../Controller/afficherQuiz.php';
-
+require_once __DIR__ . '/../../../Controller/TestC.php';
 session_start();
 
 $_SESSION['id'] = 2;
 $db = config::getConnexion();
-$quizC = new QuizController($db);
-$listeQuiz = $quizC->afficherQuiz();
 
+$id = isset($_GET['idTest']) ? intval($_GET['idTest']) : null;
+
+if (!$id) {
+    echo "Aucun test sélectionné.";
+    exit;
+}
+
+// Récupérer les quiz liés à ce test
+$stmt = $db->prepare("SELECT * FROM quizzes WHERE idTest = :idTest");
+$stmt->execute(['idTest' => $id]);
+$listeQuiz = $stmt->fetchAll(); // 🔧 ici on utilise $listeQuiz directement
+
+// Pour afficher un nom de test si besoin
+$testC = new TestC();
+$test = $testC->getPdfById($id);
+
+// Récupérer un éventuel score
 $score = isset($_GET['score']) ? intval($_GET['score']) : null;
 ?>
 
@@ -156,6 +170,8 @@ $score = isset($_GET['score']) ? intval($_GET['score']) : null;
                     <div class="card m-3 p-3 w-100">
                         <h4><?= htmlspecialchars($quiz['quiz_name']) ?></h4>
                         <a href="detailsQuiz.php?idQuiz=<?= $quiz['idQuiz'] ?>" class="btn btn-primary mt-auto">Découvrez Plus</a>
+                        
+
                     </div>
                 </div>
             <?php endforeach; ?>

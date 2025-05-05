@@ -69,7 +69,7 @@ $score = $_GET['score'] ?? null;
             font-weight: 700;
             letter-spacing: 1px;
             transition: background 0.4s ease;
-        }
+        }   
 
         .btn-primary:hover {
             background: linear-gradient(45deg, rgba(241, 220, 26, 0.94), rgb(245, 150, 9));
