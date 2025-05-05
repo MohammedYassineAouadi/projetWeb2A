@@ -3,8 +3,8 @@
 
 <head>
     <?php
-
-    $user_id = 1;
+    session_start();
+    $user_id = isset($_SESSION['user']['id']) ? intval($_SESSION['user']['id']) : 1;
     require_once __DIR__ . '/../../../controller/offre_emploi_con.php';
     require_once __DIR__ . '/../../../controller/candidature_con.php';
     require_once __DIR__ . '/../../../model/candidature.php';
@@ -254,6 +254,7 @@ https://templatemo.com/tm-548-training-studio
                                                 style="background:<?= $badgeColor ?>;color:#fff;padding:7px 16px;border-radius:6px;font-weight:600;">
                                                 <?= /* htmlspecialchars(ucfirst($candidature['statut'])) */ 'Postuler'  ?>
                                             </span>
+                                            <a href="export_pdf.php?offre_id=<?= htmlspecialchars($offre['id']) ?>" class="btn btn-secondary" style="background:#007bff;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;color:#fff;margin-left:10px;" target="_blank">Download PDF</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -369,6 +370,8 @@ https://templatemo.com/tm-548-training-studio
                     <label for="lettre_motivation" style="font-weight:600;">Lettre de motivation :</label><br>
                     <textarea name="lettre_motivation" id="modalLettreMotivation" rows="5"
                         style="width:100%;border-radius:6px;border:1px solid #ccc;padding:10px;resize:vertical;"></textarea>
+                    <button type="button" id="generateMotivationBtn" class="btn btn-secondary" style="margin-top:10px;background:#007bff;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;color:#fff;opacity:0.7;" disabled>Generate with Gemini</button>
+                    <span id="geminiLoading" style="display:none;margin-left:10px;color:#ed563b;font-weight:600;">Generating...</span>
                 </div>
                 <button type="submit" class="btn btn-primary" onclick="return validateLettreMotivationModal()"
                     style="background:#ed563b;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;">Envoyer
@@ -382,6 +385,7 @@ https://templatemo.com/tm-548-training-studio
             document.getElementById('modalOfferTitle').innerText = 'Postuler à : ' + offreTitle;
             document.getElementById('modalLettreMotivation').value = '';
             document.getElementById('motivationModal').style.display = 'flex';
+            updateGenerateBtnState();
         }
         function closeMotivationModal() {
             document.getElementById('motivationModal').style.display = 'none';
@@ -391,6 +395,57 @@ https://templatemo.com/tm-548-training-studio
             if (event.target == modal) {
                 closeMotivationModal();
             }
+        }
+        // Gemini button logic
+        const motivationTextarea = document.getElementById('modalLettreMotivation');
+        const generateBtn = document.getElementById('generateMotivationBtn');
+        const loadingSpan = document.getElementById('geminiLoading');
+        function updateGenerateBtnState() {
+            if (motivationTextarea.value.trim().length > 0) {
+                generateBtn.disabled = false;
+                generateBtn.style.opacity = '1';
+                generateBtn.style.cursor = 'pointer';
+            } else {
+                generateBtn.disabled = true;
+                generateBtn.style.opacity = '0.7';
+                generateBtn.style.cursor = 'not-allowed';
+            }
+        }
+        if (motivationTextarea && generateBtn) {
+            motivationTextarea.addEventListener('input', updateGenerateBtnState);
+            generateBtn.addEventListener('click', async function() {
+                const info = motivationTextarea.value.trim();
+                if (!info) return;
+                loadingSpan.style.display = 'inline';
+                generateBtn.disabled = true;
+                generateBtn.innerText = 'Generating...';
+                try {
+                    // Replace YOUR_GEMINI_API_KEY and endpoint as needed
+                    const apiKey = 'AIzaSyAAwLPYs2L-z3Mgfm4JnFYMgBtXdNJxsNc';
+                    const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
+                    const prompt = `Génère une lettre de motivation professionnelle en français pour une candidature à un emploi, basée sur ces informations : ${info}. La lettre doit être courte, directe, sans objet, sans date, sans formule d'adresse ni de politesse de mail, et commencer immédiatement par le contenu sans aucune introduction ou phrase comme \"Voici une lettre de motivation\". Donne uniquement le texte de la lettre, sans explication ni commentaire.`;
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }]
+                        })
+                    });
+                    const data = await response.json();
+                    if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
+                        motivationTextarea.value = data.candidates[0].content.parts[0].text;
+                    } else {
+                        alert('Failed to generate letter.');
+                    }
+                } catch (e) {
+                    alert('Error generating letter: ' + e.message);
+                } finally {
+                    loadingSpan.style.display = 'none';
+                    generateBtn.disabled = false;
+                    generateBtn.innerText = 'Generate with Gemini';
+                    updateGenerateBtnState();
+                }
+            });
         }
     </script>
 </body>

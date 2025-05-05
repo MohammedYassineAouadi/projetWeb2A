@@ -111,5 +111,12 @@ class CandidatureCon {
             echo 'Error: ' . $e->getMessage();
         }
     }
+
+    public function getCandidatureDataById($id) {
+        $db = config::getConnexion();
+        $stmt = $db->prepare("SELECT * FROM utilisateur WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
 }
 ?>

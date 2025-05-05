@@ -2,7 +2,11 @@
 require_once __DIR__ . '/../../../controller/offre_emploi_con.php';
 
 $controller = new OffreEmploiCon();
-$offres = $controller->getAll();
+// $offres = $controller->getAll();
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'date_creation';
+$order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+$offres = $controller->searchAndSort($search, $sort, $order);
 ?>
 <?php /* DeskApp/Bootstrap styled Offers List */ ?>
 <!DOCTYPE html>
@@ -73,6 +77,21 @@ $offres = $controller->getAll();
                             <a href="offre_emploi_add.php" class="btn btn-primary">Ajouter une Offre</a>
                         </div>
                     </div>
+                    <form method="get" class="mb-20" style="display:flex;gap:10px;align-items:center;">
+                        <input type="text" name="search" placeholder="Recherche (titre, entreprise, lieu)" value="<?= htmlspecialchars($search) ?>" class="form-control" style="flex-grow:2;min-width:450px;max-width:800px;">
+                        <select name="sort" class="form-control">
+                            <option value="date_creation"<?= $sort=='date_creation'?' selected':''; ?>>Date Création</option>
+                            <option value="titre"<?= $sort=='titre'?' selected':''; ?>>Titre</option>
+                            <option value="entreprise"<?= $sort=='entreprise'?' selected':''; ?>>Entreprise</option>
+                            <option value="lieu"<?= $sort=='lieu'?' selected':''; ?>>Lieu</option>
+                            <option value="salaire"<?= $sort=='salaire'?' selected':''; ?>>Salaire</option>
+                        </select>
+                        <select name="order" class="form-control">
+                            <option value="DESC"<?= strtoupper($order)=='DESC'?' selected':''; ?>>Décroissant</option>
+                            <option value="ASC"<?= strtoupper($order)=='ASC'?' selected':''; ?>>Croissant</option>
+                        </select>
+                        <button type="submit" class="btn btn-info">Rechercher / Trier</button>
+                    </form>
                     <?php if (isset($_GET['error'])): ?>
                         <div class="alert alert-danger">Erreur : <?= htmlspecialchars($_GET['error']) ?></div>
                     <?php endif; ?>

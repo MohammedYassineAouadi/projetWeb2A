@@ -102,6 +102,7 @@ $candidatures = $controller->getAll();
                                         </td>
                                         <td>
                                             <a href="candidature_update.php?id=<?= urlencode($cand['id']) ?>" class="btn btn-sm btn-info">Changer Statut</a>
+                                            <a href="./../../front/offre_emploi/export_pdf.php?offre_id=<?= htmlspecialchars($cand['id_offre']) ?>" class="btn btn-sm btn-info" target="_blank">Download PDF</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

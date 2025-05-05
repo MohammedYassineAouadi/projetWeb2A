@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../controller/candidature_con.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 $controller = new CandidatureCon();
 $msg = '';
@@ -17,6 +19,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['statut'
     $id = intval($_POST['id']);
     $statut = $_POST['statut'];
     $controller->updateStatut($id, $statut);
+    // Récupérer l'email du candidat
+    require_once __DIR__ . '/../../../config.php';
+    $pdo = Config::getConnexion();
+    $stmt = $pdo->prepare("SELECT u.email, u.nom, u.prenom, o.titre AS offre_titre, c.date FROM candidature c JOIN utilisateur u ON c.id_user = u.id JOIN offre_emploi o ON c.id_offre = o.id WHERE c.id = ?");
+    $stmt->execute([$id]);
+    $user = $stmt->fetch();
+    // var_dump($user);
+    if ($user && !empty($user['email'])) {
+        // echo "Email: ". $user['email'];
+        require_once __DIR__ . '/../../../vendor/phpmailer/phpmailer/src/Exception.php';
+        require_once __DIR__ . '/../../../vendor/phpmailer/phpmailer/src/PHPMailer.php';
+        require_once __DIR__ . '/../../../vendor/phpmailer/phpmailer/src/SMTP.php';
+        $your_mail = "startupacademy2025@gmail.com";
+        $your_password = "sire ibrv slkn kukw";
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $your_mail;
+            $mail->Password = $your_password;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+            $mail->setFrom($your_mail, 'Startup Academy');
+            $mail->addAddress($user['email'], $user['prenom'] . ' ' . $user['nom']);
+            $mail->isHTML(true);
+            $mail->Subject = 'Mise à jour du statut de votre candidature';
+            $logoUrl = 'https://i.ibb.co/S4J8f7wG/logo.png';
+            $brandColor = '#2a3f54';
+            $statutMsg = '';
+            $statusTitle = '';
+            $statusColor = '';
+            $nextStep = '';
+            if ($statut === 'acceptee') {
+                $statutMsg = 'Félicitations, votre candidature a été <b>acceptée</b> ! Nous sommes ravis de vous compter parmi les candidats retenus.';
+                $statusTitle = 'Candidature Acceptée';
+                $statusColor = '#27ae60';
+                $nextStep = '<p style="font-size:15px;color:#444;margin-bottom:18px;">Nous vous contacterons prochainement pour les prochaines étapes du processus d\'intégration. Veuillez vérifier régulièrement votre boîte mail.</p>';
+            } elseif ($statut === 'refusee') {
+                $statutMsg = 'Nous sommes désolés, votre candidature a été <b>refusée</b>. Nous vous remercions pour l\'intérêt porté à Startup Academy et vous encourageons à postuler à d\'autres opportunités.';
+                $statusTitle = 'Candidature Refusée';
+                $statusColor = '#e74c3c';
+                $nextStep = '<p style="font-size:15px;color:#444;margin-bottom:18px;">N\'hésitez pas à consulter nos autres offres et à retenter votre chance à l\'avenir.</p>';
+            } else {
+                $statutMsg = 'Votre candidature est actuellement <b>en attente</b>. Nous vous tiendrons informé dès qu\'une décision sera prise.';
+                $statusTitle = 'Candidature en Attente';
+                $statusColor = '#f1c40f';
+                $nextStep = '<p style="font-size:15px;color:#444;margin-bottom:18px;">Vous pouvez suivre l\'état de votre candidature depuis votre espace personnel.</p>';
+            }
+            $mail->Body = '<div style="font-family:Inter,Arial,sans-serif;background:#f6f8fa;padding:0;margin:0;">
+                <div style="max-width:600px;margin:auto;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.07);overflow:hidden;">
+                    <div style="background:' . $brandColor . ';padding:24px 0;text-align:center;">
+                        <img src="' . $logoUrl . '" alt="Startup Academy" style="height:60px;">
+                    </div>
+                    <div style="padding:32px 24px 24px 24px;">
+                        <h2 style="color:' . $statusColor . ';margin-bottom:8px;">' . $statusTitle . '</h2>
+                        <p style="font-size:18px;color:#222;margin-bottom:8px;">Bonjour <b>' . htmlspecialchars($user['prenom']) . ' ' . htmlspecialchars($user['nom']) . '</b>,</p>
+                        <p style="font-size:16px;color:#444;margin-bottom:8px;">Nous accusons réception de votre candidature pour le poste de <b>' . htmlspecialchars($user['offre_titre']) . '</b>.</p>
+                        <p style="font-size:15px;color:#888;margin-bottom:18px;">Date de candidature : <b>' . htmlspecialchars(date('d/m/Y', strtotime($user['date']))) . '</b></p>
+                        <p style="font-size:16px;color:#444;margin-bottom:18px;">' . $statutMsg . '</p>' . $nextStep . '
+                        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+                        <div style="font-size:14px;color:#888;line-height:1.6;">
+                            <p>Pour toute question, contactez-nous à <a href="mailto:contact@startupacademy.tn" style="color:' . $brandColor . ';text-decoration:none;">contact@startupacademy.tn</a> ou visitez notre <a href="https://startupacademy.tn" style="color:' . $brandColor . ';text-decoration:none;">site web</a>.</p>
+                            <p style="margin-top:12px;">Suivez-nous sur <a href="https://www.facebook.com/startupacademy.tn" style="color:' . $brandColor . ';">Facebook</a> | <a href="https://www.linkedin.com/company/startupacademy-tn/" style="color:' . $brandColor . ';">LinkedIn</a></p>
+                            <p style="margin-top:18px;">Cordialement,<br>L\'équipe Startup Academy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+            $mail->AltBody = strip_tags($statusTitle . "\nBonjour " . $user['prenom'] . " " . $user['nom'] . "\nPoste : " . $user['offre_titre'] . "\nDate : " . date('d/m/Y', strtotime($user['date'])) . "\n" . $statutMsg . "\n" . strip_tags($nextStep) . "\nCordialement, L'équipe Startup Academy");
+            $mail->send();
+            // echo 'Message envoyé avec succès';
+        } catch (Exception $e) {
+            error_log("Erreur lors de l'envoi du mail : " . $mail->ErrorInfo);
+            // echo 'Erreur lors de l\'envoi du mail' . $mail->ErrorInfo;
+        }
+    }
     header('Location: candidature_list.php?updated=1');
     exit();
 }

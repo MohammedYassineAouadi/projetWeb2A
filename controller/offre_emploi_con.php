@@ -77,5 +77,27 @@ class OffreEmploiCon {
             echo 'Error: ' . $e->getMessage();
         }
     }
+
+    public function searchAndSort($search = '', $sort = 'date_creation', $order = 'DESC') {
+        $allowedSort = ['id', 'titre', 'entreprise', 'lieu', 'salaire', 'date_creation', 'date_limit'];
+        $allowedOrder = ['ASC', 'DESC'];
+        $sort = in_array($sort, $allowedSort) ? $sort : 'date_creation';
+        $order = in_array(strtoupper($order), $allowedOrder) ? strtoupper($order) : 'DESC';
+        $sql = "SELECT * FROM offre_emploi WHERE 1";
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " AND (titre LIKE :search OR entreprise LIKE :search OR lieu LIKE :search)";
+            $params['search'] = '%' . $search . '%';
+        }
+        $sql .= " ORDER BY $sort $order";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            $query->execute($params);
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
 }
 ?>
