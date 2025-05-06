@@ -33,11 +33,17 @@ class ReponseModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtenir une réponse par son ID
+    // Obtenir une réponse par l'ID de réclamation
     public function getByReclamationId($idreclamation) {
-        $sql = "SELECT * FROM reponse WHERE idreclamation = ?";
-        $stmt = $this->pdo->prepare($sql);  // Corrigé ici pour utiliser $this->pdo
+        $stmt = $this->pdo->prepare("SELECT * FROM reponse WHERE idreclamation = ?");
         $stmt->execute([$idreclamation]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // ✅ Obtenir une réponse par son ID (manquante dans ton code original)
+    public function getById($idreponse) {
+        $stmt = $this->pdo->prepare("SELECT * FROM reponse WHERE idreponse = ?");
+        $stmt->execute([$idreponse]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

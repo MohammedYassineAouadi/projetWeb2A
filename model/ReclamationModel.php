@@ -37,4 +37,23 @@ class ReclamationModel {
         $stmt = $this->pdo->query("SELECT * FROM reclamation ORDER BY $orderBy");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // Méthode mise à jour : renvoie un lien local
+    public function getReponseLinkByReclamationId($idreclamation) {
+        $stmt = $this->pdo->prepare("SELECT * FROM reponse WHERE idreclamation = ?");
+        $stmt->execute([$idreclamation]);
+        $response = $stmt->fetch();
+
+        if ($response) {
+            return 'http://localhost/ton_projet/voir_reponse.php?idreclamation=' . $idreclamation;
+        } else {
+            return null;
+        }
+    }
+    public function escaladerReclamation($id) {
+        $stmt = $this->pdo->prepare("UPDATE reclamation SET niveau_escalade = niveau_escalade + 1 WHERE idreclamation = ?");
+        return $stmt->execute([$id]);
+    }
+    
 }
+?>

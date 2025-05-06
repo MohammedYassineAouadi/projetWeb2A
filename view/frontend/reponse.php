@@ -18,7 +18,7 @@ if (isset($_GET['edit'])) {
 <head>
     <meta charset="UTF-8">
     <title>Gestion des Réponses</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
 </head>
 <body>
 
@@ -27,6 +27,15 @@ if (isset($_GET['edit'])) {
 </header>
 
 <main class="container">
+
+    <!-- ✅ Bouton vers la page des réclamations par importance -->
+    <div style="margin-bottom: 20px;">
+        <a href="liste_reclamations_importance.php">
+            <button style="background-color: #f39c12; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                📊 Voir les réclamations par importance
+            </button>
+        </a>
+    </div>
 
     <?php if (isset($_GET['success'])): ?>
         <p style="color: green;">✅ Réponse ajoutée avec succès !</p>
@@ -38,12 +47,8 @@ if (isset($_GET['edit'])) {
 
     <!-- Formulaire d'ajout ou de modification -->
     <h2><?= $editData ? "Modifier la réponse" : "Ajouter une réponse" ?></h2>
-    
 
-<form action="<?= $editData ? '../../view/backend/update_reponse.php' : '../../view/backend/ajouter_reponse.php' ?>" method="POST">
-    
-    
-        
+    <form action="<?= $editData ? '../../view/backend/update_reponse.php' : '../../view/backend/ajouter_reponse.php' ?>" method="POST">
         <?php if (!$editData): ?>
             <input type="number" name="idreclamation" placeholder="ID Réclamation" required>
             <input type="number" name="id" placeholder="ID Utilisateur" required>
