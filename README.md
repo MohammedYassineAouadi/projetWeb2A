@@ -1,120 +1,130 @@
-# 🚀 Plateforme d’Apprentissage pour Entrepreneurs et Innovateurs
+# 💼 Startup Academy – Plateforme d’outils pour startups
 
-Bienvenue dans notre projet ! Il s'agit d'une plateforme en ligne inspirée de **Udemy**, destinée à favoriser l'**apprentissage**, l’**échange communautaire** et la **recherche d’opportunités professionnelles** pour les porteurs de projets, innovateurs et entrepreneurs.
-
----
-
-## ✨ Description du projet
-
-### 🎯 Objectif
-
-Créer un environnement numérique complet permettant :
-- L’accès à des **formations spécialisées**
-- Le partage d’expériences et de conseils dans un **forum interactif**
-- L'accès à une **section d’offres d’emploi** adaptée au monde de l’innovation
-
-### ❗ Problème ciblé
-
-Les jeunes porteurs de projets ou innovateurs rencontrent des difficultés à :
-- Accéder à des **ressources de qualité**
-- Échanger avec une **communauté active**
-- Trouver des **offres d’emploi ciblées**
-
-### 🧩 Fonctionnalités principales
-
-- 📚 Cours en ligne (vidéos, quiz, documents)
-- 💬 Forum communautaire intégré
-- 💼 Espace d’offres d’emploi personnalisées
-- 🔒 Authentification sécurisée (inscription / connexion)
-- 🔍 Moteur de recherche avancé
-- 📊 Tableau de bord utilisateur
+Bienvenue dans **Startup Academy**, une application web complète développée en **PHP** avec **MySQL** via **XAMPP**. Ce projet propose une suite d'outils intégrés pour les jeunes entreprises, dont un forum, une bibliothèque de cours, un système de réclamations, un espace de publication d’offres d’emploi et un module de gestion des utilisateurs.
 
 ---
 
-## 📑 Table des matières
+## 🧩 Modules Principaux
 
-- [📥 Installation](#installation)
-- [🚀 Utilisation](#utilisation)
-- [🤝 Contribution](#contribution)
-- [📄 Licence](#licence)
+### 📚 Supports de cours
+- Téléversement de fichiers (PDF, vidéos)
+- Catégorisation par thème (dev, design, etc.)
+- Visualisation intégrée
+- Fonction de recherche et pagination
 
----
+### 🛠️ Réclamations
+- Envoi de réclamations avec suivi
+- Statut : en attente, en cours, résolu
+- Tableau d’administration pour traitement
 
-## 📥 Installation
+### 🗨️ Forum / Discussion
+- Interface type Discord
+- Anonymat optionnel
+- Gestion des canaux
+- Sécurité contre les injections SQL
+- Utilisation de **Sight Engine** pour la modération des messages (détection de contenu inapproprié).
+- Intégration de **VirusTotal** pour vérifier les liens URL partagés dans les discussions.
 
-1. **Cloner le dépôt**
-```bash
-git clone https://github.com/votre-utilisateur/nom-du-projet.git
-cd nom-du-projet
-```
+### 💼 Offres d'emploi
+- Publication d’offres avec description, entreprise, localisation
+- Candidature via formulaire + CV
+- CRUD complet pour les recruteurs
 
-2. **Installer les dépendances**
-```bash
-npm install
-```
-> Ou pour Python :
-```bash
-pip install -r requirements.txt
-```
+### 👤 Authentification & Utilisateurs
+- Connexion/inscription
+- Rôles (admin, utilisateur, formateur, recruteur)
+- Gestion des comptes (modifier, supprimer, ajouter)
+- Hachage des mots de passe (bcrypt)
 
-3. **Configurer les variables d’environnement**
-
-Créer un fichier `.env` à la racine :
-```env
-DB_HOST=localhost
-DB_USER=utilisateur
-DB_PASS=motdepasse
-JWT_SECRET=cle_secrete
-```
-
-4. **Lancer le projet**
-```bash
-npm run dev
-```
-> Ou selon le framework utilisé (ex: Laravel, Django, etc.)
+### 🎯 Gestion des tests et quiz interactifs
+- Création de tests et quiz liés aux cours
+- Calcul automatique du score et progression dynamique
+- Attribution automatique de badges (Débutant, Intermédiaire, Expert)
+- Statistiques détaillées sur les résultats
 
 ---
 
-## 🚀 Utilisation
+## 🛠️ Technologies utilisées
 
-Une fois l’application démarrée :
-
-- Accéder à l’interface via [http://localhost:3000](http://localhost:3000)
-- Créer un compte ou se connecter
-- Naviguer entre les différentes sections :
-  - 📚 Cours en ligne : Suivre des formations
-  - 💬 Forum : Échanger avec la communauté
-  - 💼 Offres d’emploi : Consulter et publier des annonces
+- **Langage serveur** : PHP 
+- **Base de données** : MySQL
+- **Serveur local** : XAMPP (Apache + MySQL)
+- **Frontend** : HTML, CSS, Bootstrap, JavaScript
+- **Sécurité** : Validation côté client/serveur, requêtes préparées, sessions sécurisées
 
 ---
 
-## 🤝 Contribution
+## ⚙️ Installation (XAMPP)
 
-Les contributions sont les bienvenues ! Pour participer :
+### 1. Cloner ou télécharger le projet
+Placez le dossier du projet dans : "C:\xampp\htdocs\"
 
-1. Forker le dépôt
-2. Créer une branche pour votre fonctionnalité :
-```bash
-git checkout -b feature/nom-fonction
-```
-3. Commiter vos modifications :
-```bash
-git commit -m "Ajout de la fonctionnalité X"
-```
-4. Pousser vers votre dépôt :
-```bash
-git push origin feature/nom-fonction
-```
-5. Créer une **Pull Request**
+### 2. Lancer XAMPP
+- Démarrer **Apache** et **MySQL** via le panneau de contrôle
 
-Merci de respecter les bonnes pratiques de développement et de commenter votre code si nécessaire.
+### 3. Créer la base de données
+- Accédez à `http://localhost/phpmyadmin`
+- Créez une base nommée `startup_academy`
+- Importez le fichier `startup_academy.sql` (fourni dans le dossier `/database`)
 
----
+### 4. Configuration
+Dans `config/database.php`, modifiez si nécessaire :
 
-## 📄 Licence
+``php
+$host = 'localhost';
+$dbname = 'startup_academy';
+$user = 'root';
+$password = '';
 
-Ce projet est sous licence **MIT**.
+###### 5. Lancer le projet
 
-Vous pouvez l’utiliser, le modifier et le redistribuer librement à condition de mentionner l’auteur original.
+Accédez à :
 
-👉 Voir le fichier [LICENSE](./LICENSE) pour plus de détails.
+[http://localhost/startup-academy/](http://localhost/startup-academy/)
+
+
+startup-academy/
+├── controllers/ 
+│ ├── ForumController.php
+│ ├── ReclamationController.php
+│ ├── UserController.php
+│ ├── CoursController.php
+│ ├── QuizController.php
+│ └── BadgeController.php
+├── models/ 
+│ ├── Forum.php
+│ ├── Reclamation.php
+│ ├── User.php
+│ ├── Cours.php
+│ ├── Quiz.php
+│ └── Badge.php
+├── views/
+│ ├── front/ 
+│ │ ├── forum/
+│ │ ├── supports/
+│ │ ├── emplois/
+│ │ ├── quiz/
+│ │ └── users/
+│ └── back/ 
+│ ├── dashboard/
+│ ├── reclamations/
+│ ├── utilisateurs/
+│ └── quiz/
+├── includes/ #
+│ ├── header.php
+│ ├── footer.php
+│ └── database.php
+├── config/
+│ ├── database.php
+├── index.php 
+└── README.md
+
+
+## 👨‍💻 Équipe
+
+- **Jaibi Mohammed Amine** – Réclamations
+- **Ons Ben Said ** – Cours
+- **Aouadi Mohammed Yassine** – Forum
+- **Klibi Fatma** – Offres d’emploi
+- **Mariam Hamdi** – Utilisateurs
+- **Salma Ben Rjeb** – Test et Quiz
